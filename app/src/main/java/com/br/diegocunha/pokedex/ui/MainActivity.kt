@@ -1,4 +1,4 @@
-package com.br.diegocunha.pokedex
+package com.br.diegocunha.pokedex.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,34 +10,28 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.br.diegocunha.pokedex.ui.theme.PokedexTheme
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.br.diegocunha.pokedex.ui.home.HomeScreen
+import com.br.diegocunha.pokedex.ui.theme.PokeDexTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PokedexTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+            PokeDexTheme {
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = "pokemon_home"
                 ) {
-                    Greeting("Android")
+                    composable("pokemon_home") {
+                        HomeScreen(navController = navController)
+                    }
                 }
+
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    PokedexTheme {
-        Greeting("Android")
     }
 }

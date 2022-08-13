@@ -1,8 +1,20 @@
 package com.br.diegocunha.pokedex.ui.theme
 
+import androidx.compose.material.lightColors
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val colorGrey100 = Color(0xFFF5F5F5)
+
+internal val LightColorPalette = lightColors(
+    primary = Color.White,
+    primaryVariant = Color(0xFFC20029),
+    onPrimary = Color.Black,
+    secondary = Color.White,
+    onSecondary = Color.Black,
+    background = Color(0xFFEEEEEE),
+    onBackground = Color.Black,
+    surface = Color.White,
+    onSurface = Color.Black,
+    error = Color(0xFFD00036),
+    onError = Color.White
+)
