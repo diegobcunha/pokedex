@@ -15,7 +15,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PokeAppBar(
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
+    content: @Composable () -> Unit
 ) {
     AppBar(background = { PokeBallBackground() }) {
 
@@ -31,6 +32,8 @@ fun PokeAppBar(
                 hint = "Search your Pokemon...",
                 onSearch = onSearch
             )
+
+            content()
         }
 
     }
@@ -61,5 +64,5 @@ private fun AppBar(
 @Preview
 @Composable
 fun PokeAppBarPreview() {
-    PokeAppBar(onSearch = {})
+    PokeAppBar(onSearch = {}, content = {})
 }

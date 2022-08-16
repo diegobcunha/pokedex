@@ -12,10 +12,10 @@ interface PokeDexAPI {
     suspend fun getPokemonList(
         @Query("limit") limit: Int?,
         @Query("offset") offset: Int?
-    ): Result<PokemonResponse>
+    ): PokemonResponse
 
-    @GET("pokemon/{id}/")
+    @GET("pokemon/{name}/")
     suspend fun getPokemon(
-        @Path("id") id: Int
-    ): Result<SinglePokemonResult>
+        @Path("name") name: String
+    ): SinglePokemonResult
 }

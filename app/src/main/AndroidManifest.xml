@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.br.diegocunha.pokedex">
 
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".PokeDexApplication"
         android:allowBackup="true"
