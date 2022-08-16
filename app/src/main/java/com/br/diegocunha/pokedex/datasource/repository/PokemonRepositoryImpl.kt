@@ -21,7 +21,15 @@ class PokemonRepositoryImpl(
     }
 
     override suspend fun getPokemonDetail(id: Int): Result<SinglePokemonResult> {
-        return Result.success(SinglePokemonResult(Sprites("", "", "", ""), emptyList(), 0, 0))
+        return Result.success(
+            SinglePokemonResult(
+                Sprites("", "", "", ""),
+                emptyList(),
+                0,
+                0,
+                emptyList()
+            )
+        )
     }
 
     private suspend fun getPokemonListInfo(pokemonList: List<String>) =
@@ -52,7 +60,8 @@ class PokemonRepositoryImpl(
                 sprites = singlePokemonResult.sprites,
                 height = singlePokemonResult.height,
                 weight = singlePokemonResult.weight,
-                stats = singlePokemonResult.stats
+                stats = singlePokemonResult.stats,
+                types = singlePokemonResult.types.map { it.type }
             )
         }
 }
