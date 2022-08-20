@@ -21,6 +21,7 @@ data class PokemonResult(
 
 @Parcelize
 data class SinglePokemonResult(
+    val id: Int,
     val sprites: Sprites,
     val stats: List<Stats>,
     val height: Int,
@@ -84,10 +85,10 @@ enum class PokemonType {
 
 @Parcelize
 data class Sprites(
-    val back_default: String,
-    val back_shiny: String,
-    val front_default: String,
-    val front_shiny: String
+    val back_default: String? = null,
+    val back_shiny: String? = null,
+    val front_default: String? = null,
+    val front_shiny: String? = null
 ) : Parcelable
 
 @Parcelize
@@ -120,6 +121,7 @@ data class PokeDex(
 
 @Parcelize
 data class Pokemon(
+    val id: Int,
     val name: String,
     val sprites: Sprites,
     val stats: List<Stats>,

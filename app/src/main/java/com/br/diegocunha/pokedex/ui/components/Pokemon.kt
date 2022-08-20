@@ -1,25 +1,121 @@
 package com.br.diegocunha.pokedex.ui.components
 
-import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.br.diegocunha.pokedex.datasource.api.model.PokemonType
+import com.br.diegocunha.pokedex.datasource.api.model.Sprites
 import com.br.diegocunha.pokedex.datasource.api.model.Type
 import com.br.diegocunha.pokedex.ui.home.PokemonUI
+import com.br.diegocunha.pokedex.ui.theme.colorWhite100
+import com.br.diegocunha.pokedex.ui.theme.fontFamily
 
 @Composable
-fun Pokemon(pokemonUI: PokemonUI) {
-    Log.d("PokemonError", pokemonUI.name)
+fun PokeDexCard(pokemon: PokemonUI, onPokemonClick: (String) -> Unit) {
     Card(
-        backgroundColor = pokemonUI.types.first().pokemonColor(),
-        shape = RoundedCornerShape(32.dp)
+        modifier = Modifier
+            .clickable { onPokemonClick(pokemon.name) },
+        backgroundColor = pokemon.types.first().pokemonColor(),
+        shape = RoundedCornerShape(16.dp)
     ) {
-        Text(pokemonUI.name)
+        PokeDexCardContent(pokemon = pokemon)
     }
+}
+
+@Composable
+private fun PokeDexCardContent(pokemon: PokemonUI) {
+    Box(
+        modifier = Modifier
+            .height(120.dp)
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 8.dp, start = 12.dp)
+        ) {
+            PokemonName(text = pokemon.name)
+            PokemonTypeLabels(pokemon.types.map { it.name.name }, TypeLabelMetrics.SMALL)
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 8.dp, end = 12.dp)
+        ) {
+            PokemonId(pokemon.id.toString())
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 10.dp, bottom = 10.dp)
+                .offset(x = 5.dp, y = 10.dp)
+                .size(96.dp)
+        ) {
+            PokeBallSmall(
+                Color.White,
+                0.25f
+            )
+        }
+
+        pokemon.sprites.front_default?.let { image ->
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 8.dp, end = 8.dp)
+                    .size(72.dp)
+            ) {
+                Image(
+                    modifier = Modifier.size(72.dp),
+                    painter = rememberAsyncImagePainter(model = image),
+                    contentDescription = "${pokemon.name}_image"
+                )
+            }
+        }
+    }
+
+}
+
+@Composable
+private fun PokemonName(text: String?) {
+    Text(
+        modifier = Modifier.padding(bottom = 8.dp),
+        text = text ?: "",
+        style = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            color = colorWhite100
+        )
+    )
+}
+
+@Composable
+private fun PokemonId(text: String?) {
+    Text(
+        modifier = Modifier.alpha(0.1f),
+        text = text ?: "",
+        style = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
+    )
 }
 
 private fun Type.pokemonColor() = when (this.name) {
@@ -39,15 +135,18 @@ private fun Type.pokemonColor() = when (this.name) {
     else -> Color(0xFF58ABF6)
 }
 
-/**
- *     <color name="poke_black">#303943</color>
-<color name="poke_blue">#429BED</color>
-<color name="poke_brown">#B1736C</color>
-<color name="poke_light_blue">#58ABF6</color>
-<color name="poke_light_brown">#CA8179</color>
-<color name="poke_light_purple">#9F5BBA</color>
-<color name="poke_light_red">#F7786B</color>
-<color name="poke_light_teal">#2CDAB1</color>
-<color name="poke_light_yellow">#FFCE4B</color>
-<color name="poke_purple">#7C538C</color>
- */
+@Preview
+@Composable
+private fun PokeDexCardPreview() {
+    val pokemon = PokemonUI(
+        1,
+        "bulbasaur",
+        Sprites(front_default = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png"),
+        stats = emptyList(),
+        height = 10,
+        weight = 10,
+        types = listOf(Type(name = PokemonType.GRASS, ""))
+    )
+
+    PokeDexCard(pokemon = pokemon, onPokemonClick = {})
+}

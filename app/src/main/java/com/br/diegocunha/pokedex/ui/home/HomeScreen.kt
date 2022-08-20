@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.br.diegocunha.pokedex.ui.components.PokeAppBar
-import com.br.diegocunha.pokedex.ui.components.Pokemon
+import com.br.diegocunha.pokedex.ui.components.PokeDexCard
 import org.koin.androidx.compose.getViewModel
 
 private const val COLUMN_COUNT = 2
@@ -52,7 +52,11 @@ fun HomeScreen(navController: NavController) {
                     ), content = {
                         items(response.itemCount) { index ->
                             val pokemon = response.peek(index) ?: return@items
-                            Pokemon(pokemonUI = pokemon)
+                            PokeDexCard(
+                                pokemon = pokemon
+                            ) {
+
+                            }
                         }
                     }
                 )

@@ -28,6 +28,7 @@ class HomeViewModel(
             )
         ) { source }.flow.transformPagingData {
             PokemonUI(
+                id = it.id,
                 name = it.name,
                 sprites = it.sprites,
                 height = it.height,
@@ -41,6 +42,7 @@ class HomeViewModel(
 
 @Parcelize
 data class PokemonUI(
+    val id: Int,
     val name: String,
     val sprites: Sprites,
     val stats: List<Stats>,

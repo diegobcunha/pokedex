@@ -4,6 +4,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.ui.graphics.Color
 
 val colorGrey100 = Color(0xFFF5F5F5)
+val colorWhite100 = Color(0xFFFFFFFF)
 
 internal val LightColorPalette = lightColors(
     primary = Color.White,

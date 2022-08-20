@@ -23,6 +23,7 @@ class PokemonRepositoryImpl(
     override suspend fun getPokemonDetail(id: Int): Result<SinglePokemonResult> {
         return Result.success(
             SinglePokemonResult(
+                1,
                 Sprites("", "", "", ""),
                 emptyList(),
                 0,
@@ -56,6 +57,7 @@ class PokemonRepositoryImpl(
     private fun List<SinglePokemonResult>.transform(basePokemon: List<PokemonResult>) =
         mapIndexed { index, singlePokemonResult ->
             Pokemon(
+                id = singlePokemonResult.id,
                 name = basePokemon[index].name,
                 sprites = singlePokemonResult.sprites,
                 height = singlePokemonResult.height,
