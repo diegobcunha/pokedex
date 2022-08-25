@@ -1,8 +1,6 @@
 package com.br.diegocunha.pokedex.ui.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -19,12 +17,11 @@ fun PokeAppBar(
     content: @Composable () -> Unit
 ) {
     AppBar(background = { PokeBallBackground() }) {
-
         Column(
             Modifier.padding(
                 top = 32.dp,
-                start = 32.dp,
-                end = 32.dp,
+                start = 16.dp,
+                end = 16.dp,
                 bottom = 16.dp
             )
         ) {
@@ -33,6 +30,7 @@ fun PokeAppBar(
                 onSearch = onSearch
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
             content()
         }
 

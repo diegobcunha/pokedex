@@ -11,9 +11,6 @@ import androidx.paging.PagingState
 abstract class BasePaginationSource<T : Any> : PagingSource<Int, T>() {
 
     override fun getRefreshKey(state: PagingState<Int, T>): Int? {
-        return state.anchorPosition?.let {
-            state.closestPageToPosition(it)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(it)?.nextKey?.minus(1)
-        }
+        return state.anchorPosition
     }
 }

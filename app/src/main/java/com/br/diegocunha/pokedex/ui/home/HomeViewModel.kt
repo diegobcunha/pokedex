@@ -17,14 +17,12 @@ import kotlinx.parcelize.Parcelize
 class HomeViewModel(
     dispatchersProvider: DispatchersProvider,
     private val source: PokemonSource
-) : PaginationViewModel<PokemonUI>(dispatchersProvider, 10) {
+) : PaginationViewModel<PokemonUI>(dispatchersProvider, 1) {
 
     override fun fetchContent(initialPageSize: Int): Flow<PagingData<PokemonUI>> {
         return Pager(
             PagingConfig(
-                pageSize = 10,
-                prefetchDistance = 2,
-                initialLoadSize = 10
+                pageSize = 1
             )
         ) { source }.flow.transformPagingData {
             PokemonUI(

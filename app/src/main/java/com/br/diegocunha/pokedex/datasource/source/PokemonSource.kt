@@ -13,8 +13,8 @@ class PokemonSource(private val pokemonRepository: PokemonRepository) :
             val response = pokemonRepository.getPokeDex(offset = nextPage, limit = LIMIT)
             LoadResult.Page(
                 data = response.pokemons,
-                prevKey = if (nextPage == INITIAL_OFFSET) null else nextPage - 1,
-                nextKey = if (response.pokemons.isNotEmpty()) nextPage + 1 else null
+                prevKey = response.prevPage,
+                nextKey = response.nextPage
             )
 
         } catch (e: Exception) {
