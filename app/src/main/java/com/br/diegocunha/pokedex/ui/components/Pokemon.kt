@@ -40,8 +40,7 @@ fun PokeDexCard(pokemon: PokemonUI, onPokemonClick: (String) -> Unit) {
 private fun PokeDexCardContent(pokemon: PokemonUI) {
     Box(
         modifier = Modifier
-            .height(120.dp)
-            .fillMaxWidth()
+            .size(180.dp)
     ) {
         Column(
             modifier = Modifier

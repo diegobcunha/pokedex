@@ -22,7 +22,9 @@ class HomeViewModel(
     override fun fetchContent(initialPageSize: Int): Flow<PagingData<PokemonUI>> {
         return Pager(
             PagingConfig(
-                pageSize = 1
+                pageSize = initialPageSize,
+                prefetchDistance = 2,
+                initialLoadSize = initialPageSize
             )
         ) { source }.flow.transformPagingData {
             PokemonUI(
