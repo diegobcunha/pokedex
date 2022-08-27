@@ -29,7 +29,7 @@ class HomeViewModel(
         ) { source }.flow.transformPagingData {
             PokemonUI(
                 id = it.id,
-                name = it.name,
+                name = it.name.replaceFirstChar { name -> name.uppercaseChar() },
                 sprites = it.sprites,
                 height = it.height,
                 weight = it.weight,

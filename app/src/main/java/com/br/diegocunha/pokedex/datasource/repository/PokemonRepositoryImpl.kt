@@ -56,14 +56,18 @@ class PokemonRepositoryImpl(
 
     private fun List<SinglePokemonResult>.transform(basePokemon: List<PokemonResult>) =
         mapIndexed { index, singlePokemonResult ->
-            Pokemon(
-                id = singlePokemonResult.id,
-                name = basePokemon[index].name,
-                sprites = singlePokemonResult.sprites,
-                height = singlePokemonResult.height,
-                weight = singlePokemonResult.weight,
-                stats = singlePokemonResult.stats,
-                types = singlePokemonResult.types.map { it.type }
-            )
+            (basePokemon[index] to singlePokemonResult).toPokemon()
         }
+
+    private fun Pair<PokemonResult, SinglePokemonResult>.toPokemon(): Pokemon {
+        return Pokemon(
+            id = second.id,
+            name = first.name,
+            sprites = second.sprites,
+            height = second.height,
+            weight = second.weight,
+            stats = second.stats,
+            types = second.types.map { it.type }
+        )
+    }
 }
