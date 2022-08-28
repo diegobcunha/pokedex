@@ -51,7 +51,7 @@ data class PokemonUI(
 
 fun Pokemon.toPokemonUI() = PokemonUI(
     id = id,
-    name = name,
+    name = name.replaceFirstChar { it.uppercaseChar() },
     sprites = sprites,
     height = height,
     weight = weight,

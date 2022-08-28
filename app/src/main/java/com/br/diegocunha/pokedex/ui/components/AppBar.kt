@@ -1,6 +1,10 @@
 package com.br.diegocunha.pokedex.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -25,11 +29,6 @@ fun PokeAppBar(
                 bottom = 16.dp
             )
         ) {
-            SearchBar(
-                hint = "Search your Pokemon...",
-                onSearch = onSearch
-            )
-
             Spacer(modifier = Modifier.height(16.dp))
             content()
         }

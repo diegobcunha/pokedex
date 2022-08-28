@@ -15,6 +15,7 @@ import androidx.paging.compose.items
 import com.br.diegocunha.pokedex.ui.components.PokeAppBar
 import com.br.diegocunha.pokedex.ui.components.PokeDexCard
 import com.br.diegocunha.pokedex.ui.components.makeLoadingContent
+import com.br.diegocunha.pokedex.ui.navigation.PokeScreen
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -36,7 +37,12 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     items(response) {
-                        it?.let { PokeDexCard(pokemon = it, onPokemonClick = {}) }
+                        it?.let {
+                            PokeDexCard(pokemon = it, onPokemonClick = {
+                                val route = PokeScreen.PokemonDetail.navigate(it)
+                                navController.navigate(route)
+                            })
+                        }
                         Spacer(Modifier.height(8.dp))
                     }
 
