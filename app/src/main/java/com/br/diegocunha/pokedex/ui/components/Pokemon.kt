@@ -2,7 +2,13 @@ package com.br.diegocunha.pokedex.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -20,7 +26,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.br.diegocunha.pokedex.datasource.api.model.PokemonType
 import com.br.diegocunha.pokedex.datasource.api.model.Sprites
 import com.br.diegocunha.pokedex.datasource.api.model.Type
-import com.br.diegocunha.pokedex.ui.home.PokemonUI
+import com.br.diegocunha.pokedex.datasource.repository.PokemonUI
 import com.br.diegocunha.pokedex.ui.theme.colorWhite100
 import com.br.diegocunha.pokedex.ui.theme.fontFamily
 
@@ -40,7 +46,8 @@ fun PokeDexCard(pokemon: PokemonUI, onPokemonClick: (String) -> Unit) {
 private fun PokeDexCardContent(pokemon: PokemonUI) {
     Box(
         modifier = Modifier
-            .size(180.dp)
+            .fillMaxWidth()
+            .height(90.dp)
     ) {
         Column(
             modifier = Modifier

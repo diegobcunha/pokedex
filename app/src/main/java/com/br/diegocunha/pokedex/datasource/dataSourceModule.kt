@@ -5,7 +5,6 @@ import com.br.diegocunha.pokedex.datasource.api.CallAdapterFactory
 import com.br.diegocunha.pokedex.datasource.api.PokeDexAPI
 import com.br.diegocunha.pokedex.datasource.repository.PokemonRepository
 import com.br.diegocunha.pokedex.datasource.repository.PokemonRepositoryImpl
-import com.br.diegocunha.pokedex.datasource.source.PokemonSource
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -29,8 +28,6 @@ val dataSourceModule = module {
     single { retrofit(get(), get()).create(PokeDexAPI::class.java) }
 
     factory<PokemonRepository> { PokemonRepositoryImpl(get(), get()) }
-
-    factory { PokemonSource(get()) }
 }
 
 private fun Scope.okHttp3(): OkHttpClient {

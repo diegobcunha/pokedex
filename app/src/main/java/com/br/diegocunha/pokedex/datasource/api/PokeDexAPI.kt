@@ -18,4 +18,7 @@ interface PokeDexAPI {
     suspend fun getPokemon(
         @Path("name") name: String
     ): SinglePokemonResult
+
+    @GET("pokemon/{id}/")
+    suspend fun getPokemonById(@Path("id") id: Int): Result<SinglePokemonResult>
 }

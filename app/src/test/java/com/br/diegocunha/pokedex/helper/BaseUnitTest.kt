@@ -1,4 +1,4 @@
-package com.br.diegocunha.pokedex.testers
+package com.br.diegocunha.pokedex.helper
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi

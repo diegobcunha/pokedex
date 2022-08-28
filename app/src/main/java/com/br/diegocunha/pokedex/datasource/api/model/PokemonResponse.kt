@@ -4,7 +4,6 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
-
 @Parcelize
 data class PokemonResponse(
     val count: Int,
@@ -12,6 +11,15 @@ data class PokemonResponse(
     val previous: String?,
     val results: List<PokemonResult>
 ) : Parcelable
+
+fun PokemonResponse.nextPage() =
+    next.substringAfter(delimiter = "offset=").substringBefore(delimiter = "&").toInt()
+
+fun PokemonResponse.prevPage() = if (!previous.isNullOrEmpty()) {
+    previous.substringAfter(delimiter = "offset=").substringBefore(delimiter = "&").toInt()
+} else {
+    null
+}
 
 @Parcelize
 data class PokemonResult(
@@ -32,53 +40,72 @@ data class SinglePokemonResult(
 @Parcelize
 data class SlotType(
     val type: Type
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class Type(
     val name: PokemonType,
     val url: String
-): Parcelable
+) : Parcelable
 
 enum class PokemonType {
     @SerializedName("normal")
     NORMAL,
+
     @SerializedName("fighting")
     FIGHTING,
+
     @SerializedName("flying")
     FLYING,
+
     @SerializedName("poison")
     POISON,
+
     @SerializedName("ground")
     GROUND,
+
     @SerializedName("rock")
     ROCK,
+
     @SerializedName("bug")
     BUG,
+
     @SerializedName("ghost")
     GHOST,
+
     @SerializedName("steel")
     STEEL,
+
     @SerializedName("fire")
     FIRE,
+
     @SerializedName("water")
     WATER,
+
     @SerializedName("grass")
     GRASS,
+
     @SerializedName("electric")
     ELECTRIC,
+
     @SerializedName("psychic")
     PSYCHIC,
+
     @SerializedName("ice")
     ICE,
+
     @SerializedName("dragon")
     DRAGON,
+
     @SerializedName("dark")
     DARK,
+
     @SerializedName("fairy")
     FAIRY,
+
     @SerializedName("unknown")
     UNKNOWN,
+
     @SerializedName("shadow")
     SHADOW
 }
@@ -103,21 +130,6 @@ data class Stat(
     val name: String,
     val url: String
 ) : Parcelable
-
-@Parcelize
-data class PokeDex(
-    val count: Int,
-    val next: String,
-    val previous: String?,
-    val pokemons: List<Pokemon>
-) : Parcelable {
-    val nextPage: Int =
-        next.substringAfter(delimiter = "offset=").substringBefore(delimiter = "&").toInt()
-
-    val prevPage: Int? =
-        if (previous.isNullOrEmpty()) null else previous.substringAfter(delimiter = "offset=")
-            .substringBefore(delimiter = "&").toInt()
-}
 
 @Parcelize
 data class Pokemon(
