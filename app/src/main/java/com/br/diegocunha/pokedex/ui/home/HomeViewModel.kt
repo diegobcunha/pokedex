@@ -4,10 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.paging.PagingData
 import com.br.diegocunha.pokedex.coroutine.DispatchersProvider
 import com.br.diegocunha.pokedex.datasource.repository.PokemonRepository
-import com.br.diegocunha.pokedex.datasource.repository.PokemonUI
-import com.br.diegocunha.pokedex.datasource.repository.toPokemonUI
 import com.br.diegocunha.pokedex.extensions.transformPagingData
 import com.br.diegocunha.pokedex.templates.PaginationViewModel
+import com.br.diegocunha.pokedex.ui.model.PokemonUI
+import com.br.diegocunha.pokedex.ui.model.toPokemonUI
 import kotlinx.coroutines.flow.Flow
 
 class HomeViewModel(

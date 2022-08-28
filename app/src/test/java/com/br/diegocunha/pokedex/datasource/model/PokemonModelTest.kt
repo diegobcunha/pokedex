@@ -1,7 +1,7 @@
 package com.br.diegocunha.pokedex.datasource.model
 
 import com.br.diegocunha.pokedex.datasource.fixture.pokemon
-import com.br.diegocunha.pokedex.datasource.repository.toPokemonUI
+import com.br.diegocunha.pokedex.ui.model.toPokemonUI
 import kotlin.test.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

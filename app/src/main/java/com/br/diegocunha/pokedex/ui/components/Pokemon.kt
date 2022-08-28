@@ -26,7 +26,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.br.diegocunha.pokedex.datasource.api.model.PokemonType
 import com.br.diegocunha.pokedex.datasource.api.model.Sprites
 import com.br.diegocunha.pokedex.datasource.api.model.Type
-import com.br.diegocunha.pokedex.datasource.repository.PokemonUI
+import com.br.diegocunha.pokedex.ui.model.PokemonUI
 import com.br.diegocunha.pokedex.ui.navigation.PokemonParam
 import com.br.diegocunha.pokedex.ui.theme.colorWhite100
 import com.br.diegocunha.pokedex.ui.theme.fontFamily

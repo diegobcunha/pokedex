@@ -1,6 +1,5 @@
 package com.br.diegocunha.pokedex.datasource.fixture
 
-import com.br.diegocunha.pokedex.datasource.api.model.Pokemon
 import com.br.diegocunha.pokedex.datasource.api.model.PokemonResponse
 import com.br.diegocunha.pokedex.datasource.api.model.PokemonResult
 import com.br.diegocunha.pokedex.datasource.api.model.SinglePokemonResult
@@ -24,6 +23,7 @@ fun pokemonResult() = PokemonResult(
 
 val singlePokemonResult = SinglePokemonResult(
     1,
+    "name",
     Sprites(),
     emptyList(),
     10,
@@ -31,7 +31,7 @@ val singlePokemonResult = SinglePokemonResult(
     emptyList()
 )
 
-val pokemon = Pokemon(
+val pokemon = SinglePokemonResult(
     1,
     "name",
     sprites = Sprites(),

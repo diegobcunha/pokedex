@@ -2,8 +2,6 @@ package com.br.diegocunha.pokedex.datasource.source
 
 import com.br.diegocunha.pokedex.coroutine.DispatchersProvider
 import com.br.diegocunha.pokedex.datasource.api.PokeDexAPI
-import com.br.diegocunha.pokedex.datasource.api.model.Pokemon
-import com.br.diegocunha.pokedex.datasource.api.model.PokemonResult
 import com.br.diegocunha.pokedex.datasource.api.model.SinglePokemonResult
 import com.br.diegocunha.pokedex.datasource.api.model.nextPage
 import com.br.diegocunha.pokedex.datasource.api.model.prevPage
@@ -18,15 +16,15 @@ class PokemonSource(
     private val search: String?,
     private val dispatchersProvider: DispatchersProvider
 ) :
-    BasePaginationSource<Pokemon>() {
+    BasePaginationSource<SinglePokemonResult>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SinglePokemonResult> {
         return try {
             val nextPage = params.key ?: INITIAL_OFFSET
             val response = api.getPokemonList(limit = LIMIT, offset = nextPage)
             val results = response.results
             val pokemonInfo = getPokemonListInfo(results.map { it.name })
-            val pokemons = pokemonInfo.transform(results)
+            val pokemons = pokemonInfo
 
             LoadResult.Page(
                 data = pokemons,
@@ -50,23 +48,6 @@ class PokemonSource(
                 *items.toTypedArray()
             )
         }
-
-    private fun List<SinglePokemonResult>.transform(basePokemon: List<PokemonResult>) =
-        mapIndexed { index, singlePokemonResult ->
-            (basePokemon[index] to singlePokemonResult).toPokemon()
-        }
-
-    private fun Pair<PokemonResult, SinglePokemonResult>.toPokemon(): Pokemon {
-        return Pokemon(
-            id = second.id,
-            name = first.name,
-            sprites = second.sprites,
-            height = second.height,
-            weight = second.weight,
-            stats = second.stats,
-            types = second.types.map { it.type }
-        )
-    }
 
     companion object {
         private const val INITIAL_OFFSET = 0

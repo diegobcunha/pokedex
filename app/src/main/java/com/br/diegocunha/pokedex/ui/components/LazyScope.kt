@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.br.diegocunha.pokedex.datasource.repository.PokemonUI
+import com.br.diegocunha.pokedex.ui.model.PokemonUI
 
 fun LazyListScope.makeLoadingContent(response: LazyPagingItems<PokemonUI>) {
     response.apply {

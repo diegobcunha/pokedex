@@ -30,6 +30,7 @@ data class PokemonResult(
 @Parcelize
 data class SinglePokemonResult(
     val id: Int,
+    val name: String,
     val sprites: Sprites,
     val stats: List<Stats>,
     val height: Int,
@@ -129,15 +130,4 @@ data class Stats(
 data class Stat(
     val name: String,
     val url: String
-) : Parcelable
-
-@Parcelize
-data class Pokemon(
-    val id: Int,
-    val name: String,
-    val sprites: Sprites,
-    val stats: List<Stats>,
-    val height: Int,
-    val weight: Int,
-    val types: List<Type>
 ) : Parcelable
