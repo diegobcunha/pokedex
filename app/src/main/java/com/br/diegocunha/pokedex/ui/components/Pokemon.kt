@@ -125,7 +125,7 @@ private fun PokemonId(text: String?) {
     )
 }
 
-private fun Type.pokemonColor() = when (this.name) {
+fun Type.pokemonColor() = when (this.name) {
     PokemonType.GRASS,
     PokemonType.BUG -> Color(0xFF2CDAB1)
     PokemonType.FIRE -> Color(0xFFF7786B)
