@@ -17,12 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.br.diegocunha.pokedex.R
 import com.br.diegocunha.pokedex.datasource.api.model.PokemonType
 import com.br.diegocunha.pokedex.datasource.api.model.Sprites
 import com.br.diegocunha.pokedex.datasource.api.model.Type
@@ -64,7 +66,7 @@ private fun PokeDexCardContent(pokemon: PokemonUI) {
                 .align(Alignment.TopEnd)
                 .padding(top = 8.dp, end = 12.dp)
         ) {
-            PokemonId(pokemon.id.toString())
+            PokemonId(getPokemonId(pokemon.id))
         }
 
         Box(
@@ -110,6 +112,13 @@ private fun PokemonName(text: String?) {
             color = colorWhite100
         )
     )
+}
+
+@Composable
+fun getPokemonId(id: Int) = when (id) {
+    in 0..9 -> stringResource(id = R.string.pokemon_index_small, id)
+    in 10..99 -> stringResource(id = R.string.pokemon_index_medium, id)
+    else -> stringResource(id = R.string.pokemon_index_high, id)
 }
 
 @Composable

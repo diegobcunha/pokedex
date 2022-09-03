@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.br.diegocunha.pokedex.datasource.api.model.Type
 import com.br.diegocunha.pokedex.ui.theme.colorWhite100
 import com.br.diegocunha.pokedex.ui.theme.fontFamily
 
@@ -38,6 +39,19 @@ fun PokemonTypeLabels(types: List<String>?, metrics: TypeLabelMetrics) {
             shape = RoundedCornerShape(metrics.cornerRadius)
         ) {
             PokemonTypeLabel(it, metrics)
+        }
+        Spacer(modifier = Modifier.size(metrics.elementSpacing))
+    }
+}
+
+@Composable
+fun PokemonTypeLabelsDetail(types: List<Type>?, metrics: TypeLabelMetrics) {
+    types?.forEach {
+        Surface(
+            color = it.pokemonColor(),
+            shape = RoundedCornerShape(metrics.cornerRadius)
+        ) {
+            PokemonTypeLabel(it.name.name, metrics)
         }
         Spacer(modifier = Modifier.size(metrics.elementSpacing))
     }

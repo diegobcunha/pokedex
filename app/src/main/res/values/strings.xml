@@ -4,4 +4,9 @@
     <string name="error_subtitle">Alguma coisa deu errado, tente novamente em alguns instantes</string>
     <string name="try_again">Tentar novamente</string>
     <string name="resources_backstack_description">Voltar</string>
+    <string name="pokemon_type_title">Tipos</string>
+    <string name="pokemon_index">Índice</string>
+    <string name="pokemon_index_small">#00%s</string>
+    <string name="pokemon_index_medium">#0%s</string>
+    <string name="pokemon_index_high">#$%s</string>
 </resources>
