@@ -15,6 +15,7 @@ buildscript {
         core_testing_version = '2.1.0'
         turbine_version = '0.9.0'
         navigation_version = '2.5.1'
+        room_version = "2.4.3"
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
