@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.br.diegocunha.pokedex.R
-import com.br.diegocunha.pokedex.datasource.api.model.Type
+import com.br.diegocunha.pokedex.datasource.core.Type
 import com.br.diegocunha.pokedex.ui.components.DefaultDivider
 import com.br.diegocunha.pokedex.ui.components.DefaultScaffoldTopBar
 import com.br.diegocunha.pokedex.ui.components.DefaultTitle

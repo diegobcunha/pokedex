@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.br.diegocunha.pokedex.ui.detail.PokemonDetailScreen
 import com.br.diegocunha.pokedex.ui.home.HomeScreen
 import com.br.diegocunha.pokedex.ui.navigation.PokeScreen
+import com.br.diegocunha.pokedex.ui.navigation.PokemonParam
 import com.br.diegocunha.pokedex.ui.navigation.PokemonParamType
 import com.br.diegocunha.pokedex.ui.theme.PokeDexTheme
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -64,7 +65,8 @@ class MainActivity : ComponentActivity() {
                         PokemonDetailScreen(
                             navController,
                             navBackStackEntry.arguments?.getParcelable(
-                                PokeScreen.PokemonDetail.argumentName
+                                PokeScreen.PokemonDetail.argumentName,
+                                PokemonParam::class.java
                             )
                                 ?: throw Exception("Argument should be passed")
                         )

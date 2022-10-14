@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.br.diegocunha.pokedex.datasource.api.model.Type
+import com.br.diegocunha.pokedex.datasource.core.Type
 import com.br.diegocunha.pokedex.ui.theme.colorWhite100
 import com.br.diegocunha.pokedex.ui.theme.fontFamily
 

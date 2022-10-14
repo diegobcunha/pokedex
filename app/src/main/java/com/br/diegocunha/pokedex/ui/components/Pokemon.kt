@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.br.diegocunha.pokedex.R
-import com.br.diegocunha.pokedex.datasource.api.model.PokemonType
-import com.br.diegocunha.pokedex.datasource.api.model.Sprites
-import com.br.diegocunha.pokedex.datasource.api.model.Type
+import com.br.diegocunha.pokedex.datasource.core.PokemonType
+import com.br.diegocunha.pokedex.datasource.core.Sprites
+import com.br.diegocunha.pokedex.datasource.core.Type
 import com.br.diegocunha.pokedex.ui.model.PokemonUI
 import com.br.diegocunha.pokedex.ui.navigation.PokemonParam
 import com.br.diegocunha.pokedex.ui.theme.colorWhite100
