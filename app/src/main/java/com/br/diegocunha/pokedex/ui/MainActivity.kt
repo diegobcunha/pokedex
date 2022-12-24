@@ -7,10 +7,10 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.navigation.navArgument
+import com.br.diegocunha.pokedex.extensions.parcelableData
 import com.br.diegocunha.pokedex.ui.detail.PokemonDetailScreen
 import com.br.diegocunha.pokedex.ui.home.HomeScreen
 import com.br.diegocunha.pokedex.ui.navigation.PokeScreen
-import com.br.diegocunha.pokedex.ui.navigation.PokemonParam
 import com.br.diegocunha.pokedex.ui.navigation.PokemonParamType
 import com.br.diegocunha.pokedex.ui.theme.PokeDexTheme
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -64,10 +64,7 @@ class MainActivity : ComponentActivity() {
                     ) { navBackStackEntry ->
                         PokemonDetailScreen(
                             navController,
-                            navBackStackEntry.arguments?.getParcelable(
-                                PokeScreen.PokemonDetail.argumentName,
-                                PokemonParam::class.java
-                            )
+                            navBackStackEntry.arguments?.parcelableData(PokeScreen.PokemonDetail.argumentName)
                                 ?: throw Exception("Argument should be passed")
                         )
                     }
