@@ -24,10 +24,9 @@ class PokemonSource(
             val response = api.getPokemonList(limit = LIMIT, offset = nextPage)
             val results = response.results
             val pokemonInfo = getPokemonListInfo(results.map { it.name })
-            val pokemons = pokemonInfo
 
             LoadResult.Page(
-                data = pokemons,
+                data = pokemonInfo,
                 prevKey = response.prevPage(),
                 nextKey = response.nextPage()
             )

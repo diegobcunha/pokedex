@@ -38,13 +38,13 @@ import com.br.diegocunha.pokedex.ui.components.TypeLabelMetrics
 import com.br.diegocunha.pokedex.ui.components.getPokemonId
 import com.br.diegocunha.pokedex.ui.components.pokemonColor
 import com.br.diegocunha.pokedex.ui.navigation.PokemonParam
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PokemonDetailScreen(navController: NavController, params: PokemonParam) {
-    val viewModel = getViewModel<PokemonDetailViewModel>() { parametersOf(params.id) }
+    val viewModel = koinViewModel<PokemonDetailViewModel>() { parametersOf(params.id) }
     val viewModelState by viewModel.stateFlow.collectAsState()
 
     DefaultScaffoldTopBar(

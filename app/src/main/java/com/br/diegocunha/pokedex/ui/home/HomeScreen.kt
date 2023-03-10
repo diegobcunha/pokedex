@@ -16,11 +16,11 @@ import com.br.diegocunha.pokedex.ui.components.PokeAppBar
 import com.br.diegocunha.pokedex.ui.components.PokeDexCard
 import com.br.diegocunha.pokedex.ui.components.makeLoadingContent
 import com.br.diegocunha.pokedex.ui.navigation.PokeScreen
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val viewModel = getViewModel<HomeViewModel>()
+    val viewModel = koinViewModel<HomeViewModel>()
     val response = viewModel.pagingFlow.collectAsLazyPagingItems()
 
     Surface(

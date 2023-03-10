@@ -14,7 +14,7 @@ abstract class StateViewModel<T>(dispatchersProvider: DispatchersProvider) :
      */
     protected val _stateFlow: MutableStateFlow<GetState<T>> by lazy {
         MutableStateFlow<GetState<T>>(GetState.initial()).apply {
-            launchIO {
+            launchMain {
                 emit(fetch())
             }
         }
@@ -31,7 +31,7 @@ abstract class StateViewModel<T>(dispatchersProvider: DispatchersProvider) :
      * Retry method in cases where the network call fails
      */
     fun retry() {
-        launchIO {
+        launchMain {
             _stateFlow.retryState(::fetch)
         }
     }
