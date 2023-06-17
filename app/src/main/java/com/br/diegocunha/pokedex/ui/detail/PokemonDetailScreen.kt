@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.br.diegocunha.pokedex.R
 import com.br.diegocunha.pokedex.datasource.core.Type
@@ -43,7 +42,7 @@ import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PokemonDetailScreen(navController: NavController, params: PokemonParam) {
+fun PokemonDetailScreen(params: PokemonParam) {
     val viewModel = koinViewModel<PokemonDetailViewModel>() { parametersOf(params.id) }
     val viewModelState by viewModel.stateFlow.collectAsState()
 

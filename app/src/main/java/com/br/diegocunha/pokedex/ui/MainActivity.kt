@@ -53,7 +53,9 @@ class MainActivity : ComponentActivity() {
                     }
                 ) {
                     composable(PokeScreen.Home.route) {
-                        HomeScreen(navController = navController)
+                        HomeScreen {
+                            navController.navigate(it)
+                        }
                     }
 
                     composable(
@@ -63,7 +65,6 @@ class MainActivity : ComponentActivity() {
                         })
                     ) { navBackStackEntry ->
                         PokemonDetailScreen(
-                            navController,
                             navBackStackEntry.arguments?.parcelableData(PokeScreen.PokemonDetail.argumentName)
                                 ?: throw Exception("Argument should be passed")
                         )

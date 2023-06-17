@@ -9,7 +9,6 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.br.diegocunha.pokedex.ui.components.PokeAppBar
@@ -19,7 +18,7 @@ import com.br.diegocunha.pokedex.ui.navigation.PokeScreen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(onPokemonSelected: (String) -> Unit) {
     val viewModel = koinViewModel<HomeViewModel>()
     val response = viewModel.pagingFlow.collectAsLazyPagingItems()
 
@@ -40,7 +39,7 @@ fun HomeScreen(navController: NavController) {
                         it?.let {
                             PokeDexCard(pokemon = it, onPokemonClick = {
                                 val route = PokeScreen.PokemonDetail.navigate(it)
-                                navController.navigate(route)
+                                onPokemonSelected(route)
                             })
                         }
                         Spacer(Modifier.height(8.dp))
