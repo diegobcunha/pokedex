@@ -1,6 +1,7 @@
 package com.br.diegocunha.pokedex.datasource.api.model
 
 import android.os.Parcelable
+import com.br.diegocunha.pokedex.datasource.core.MoveType
 import com.br.diegocunha.pokedex.datasource.core.SlotType
 import com.br.diegocunha.pokedex.datasource.core.Sprites
 import com.br.diegocunha.pokedex.datasource.core.Stats
@@ -37,5 +38,6 @@ data class SinglePokemonResult(
     val stats: List<Stats>,
     val height: Int,
     val weight: Int,
-    val types: List<SlotType>
+    val types: List<SlotType>,
+    val moves: List<MoveType>
 ) : Parcelable

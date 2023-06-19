@@ -161,7 +161,8 @@ private fun PokeDexCardPreview() {
         stats = emptyList(),
         height = 10,
         weight = 10,
-        types = listOf(Type(name = PokemonType.GRASS, ""))
+        types = listOf(Type(name = PokemonType.GRASS, "")),
+        moves = emptyList()
     )
 
     PokeDexCard(pokemon = pokemon, onPokemonClick = {})

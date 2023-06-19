@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,7 +34,6 @@ import com.br.diegocunha.pokedex.ui.components.ProgressIndicator
 import com.br.diegocunha.pokedex.ui.components.RowTitle
 import com.br.diegocunha.pokedex.ui.components.TypeLabelMetrics
 import com.br.diegocunha.pokedex.ui.components.getPokemonId
-import com.br.diegocunha.pokedex.ui.components.pokemonColor
 import com.br.diegocunha.pokedex.ui.navigation.PokemonParam
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -62,23 +60,7 @@ fun PokemonDetailScreen(params: PokemonParam) {
                 }
             },
             success = {
-                LazyColumn {
-                    stickyHeader {
-                        PokemonDetailHeader(
-                            imageUrl = it.sprites.front_default,
-                            pokemonName = it.name,
-                            pokemonColor = it.types.first().pokemonColor()
-                        )
-                    }
-
-                    item {
-                        PokemonIndex(it.id)
-                    }
-
-                    item {
-                        PokemonType(types = it.types)
-                    }
-                }
+                Details(it)
             }
         )
     }

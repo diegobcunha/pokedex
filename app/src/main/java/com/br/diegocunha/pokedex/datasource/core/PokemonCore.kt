@@ -97,3 +97,13 @@ data class Stat(
     val name: String,
     val url: String
 ) : Parcelable
+
+@Parcelize
+data class MoveType(
+    val move: Move
+): Parcelable
+
+@Parcelize
+data class Move(
+    val name: String
+): Parcelable
