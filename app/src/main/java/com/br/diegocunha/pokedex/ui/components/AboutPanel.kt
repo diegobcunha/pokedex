@@ -27,27 +27,21 @@ fun AboutPanelLayout(
     modifier: Modifier = Modifier,
     startSlot: @Composable () -> Unit,
     middleSlot: @Composable () -> Unit,
-    endSlot: @Composable () -> Unit,
     dividerColor: Color = Color.LightGray
 ) {
     Row(
         modifier = modifier
-            .height(52.dp)
+            .fillMaxWidth()
+            .height(52.dp),
     ) {
-        Box(modifier = Modifier, contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.weight(1F), contentAlignment = Alignment.Center) {
             startSlot.invoke()
         }
         DividerVertical(color = dividerColor)
         Spacer(Modifier.width(12.dp))
-        Box(modifier = Modifier, contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.weight(1F), contentAlignment = Alignment.Center) {
             middleSlot.invoke()
         }
-        DividerVertical(color = dividerColor)
-        Spacer(Modifier.width(12.dp))
-        Box(modifier = Modifier, contentAlignment = Alignment.TopEnd) {
-            endSlot.invoke()
-        }
-
     }
 }
 
@@ -62,7 +56,7 @@ fun AboutPanelIconInfo(
     AboutPanelInfo(information = {
         Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceBetween) {
             Image(
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(24.dp),
                 painter = iconLabelPainter,
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(color = iconColor)
@@ -103,7 +97,8 @@ fun AboutPanelInfo(information: @Composable () -> Unit, informationTitle: String
         modifier = Modifier
             .fillMaxHeight()
             .width(74.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         information.invoke()
         Text(
