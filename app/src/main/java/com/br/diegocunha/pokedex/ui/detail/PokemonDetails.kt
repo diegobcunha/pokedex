@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -105,7 +108,7 @@ fun Details(pokemonUI: PokemonUI) {
 private fun DetailContent(
     modifier: Modifier = Modifier, pokemonUI: PokemonUI
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(modifier = modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         TypesDetails(modifier = Modifier.fillMaxWidth(), typeList = pokemonUI.types)
         AboutSection(pokemonUI)
         MoveSection(moves = pokemonUI.moves)
@@ -172,6 +175,7 @@ private fun AboutPokemon(
     })
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MoveSection(moves: List<Move>) {
     Text(
@@ -181,7 +185,9 @@ fun MoveSection(moves: List<Move>) {
         textAlign = TextAlign.Center
     )
 
-    Row {
-
+    FlowRow {
+        moves.forEach {
+            TextBadge(text = it.name)
+        }
     }
 }
