@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import com.br.diegocunha.pokedex.ui.components.PokeAppBar
 import com.br.diegocunha.pokedex.ui.components.PokeDexCard
 import com.br.diegocunha.pokedex.ui.components.makeLoadingContent
@@ -35,13 +35,17 @@ fun HomeScreen(onPokemonSelected: (String) -> Unit) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    items(response) {
-                        it?.let {
-                            PokeDexCard(pokemon = it, onPokemonClick = {
-                                val route = PokeScreen.PokemonDetail.navigate(it)
-                                onPokemonSelected(route)
-                            })
-                        }
+
+                    items(
+                        count = response.itemCount,
+                        key = response.itemKey { it.id },
+                    ) {index ->
+                        val item = response[index]
+                        PokeDexCard(pokemon = item, onPokemonClick = {
+                            val route = PokeScreen.PokemonDetail.navigate(it)
+                            onPokemonSelected(route)
+                        })
+
                         Spacer(Modifier.height(8.dp))
                     }
 

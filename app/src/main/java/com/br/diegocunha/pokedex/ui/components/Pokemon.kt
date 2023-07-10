@@ -34,14 +34,16 @@ import com.br.diegocunha.pokedex.ui.theme.colorWhite100
 import com.br.diegocunha.pokedex.ui.theme.fontFamily
 
 @Composable
-fun PokeDexCard(pokemon: PokemonUI, onPokemonClick: (PokemonParam) -> Unit) {
-    Card(
-        modifier = Modifier
-            .clickable { onPokemonClick(pokemon.toParams()) },
-        backgroundColor = pokemon.types.first().pokemonColor(),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        PokeDexCardContent(pokemon = pokemon)
+fun PokeDexCard(pokemon: PokemonUI?, onPokemonClick: (PokemonParam) -> Unit) {
+    pokemon?.let {
+        Card(
+            modifier = Modifier
+                .clickable { onPokemonClick(pokemon.toParams()) },
+            backgroundColor = pokemon.types.first().pokemonColor(),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            PokeDexCardContent(pokemon = pokemon)
+        }
     }
 }
 
