@@ -3,7 +3,8 @@ package com.br.diegocunha.pokedex.datasource.fixture
 import com.br.diegocunha.pokedex.datasource.api.model.PokemonResponse
 import com.br.diegocunha.pokedex.datasource.api.model.PokemonResult
 import com.br.diegocunha.pokedex.datasource.api.model.SinglePokemonResult
-import com.br.diegocunha.pokedex.datasource.api.model.Sprites
+import com.br.diegocunha.pokedex.datasource.core.Sprites
+import com.br.diegocunha.pokedex.ui.model.toPokemonUI
 
 val pokemonEmptyResponse = PokemonResponse(
     0,
@@ -28,6 +29,7 @@ val singlePokemonResult = SinglePokemonResult(
     emptyList(),
     10,
     10,
+    emptyList(),
     emptyList()
 )
 
@@ -38,5 +40,8 @@ val pokemon = SinglePokemonResult(
     stats = emptyList(),
     10,
     10,
+    emptyList(),
     emptyList()
 )
+
+val pokemonUi = pokemon.toPokemonUI()
