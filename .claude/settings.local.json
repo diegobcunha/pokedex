@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./gradlew assembleDebug 2>&1)"
+      "Bash(./gradlew assembleDebug 2>&1)",
+      "Bash(git checkout:*)"
     ]
   }
 }
