@@ -1,4 +1,4 @@
-package com.diegocunha.pokedex.ui.theme
+package com.diegocunha.pokedex.coreui.theme
 
 import androidx.compose.ui.graphics.Color
 
