@@ -31,11 +31,11 @@ This is a Android Pokedex app in early development. The current codebase is mini
 - **Package root:** `com.diegocunha.pokedex`
 - **DI framework:** Insert-Koin
 - **Networking:** Retrofit + OkHttp to network call
-- **No DI framework, networking, or local DB yet** — these need to be added as features are built
+- **No local DB yet** — to be added as features require it
 
 ## Key Files
 
-- `app/src/main/java/Thicom/diegocunha/pokedex/MainActivity.kt` — Entry point
+- `app/src/main/java/com/diegocunha/pokedex/MainActivity.kt` — Entry point
 - `app/src/main/java/com/diegocunha/pokedex/ui/theme/` — Material3 theme (Color, Theme, Type)
 - `gradle/libs.versions.toml` — Centralized version catalog for all dependencies
 - `app/build.gradle.kts` — App module build configuration (Java 11, Compose enabled)
@@ -44,6 +44,32 @@ This is a Android Pokedex app in early development. The current codebase is mini
 
 All dependency versions are managed via the version catalog at `gradle/libs.versions.toml`. Add new dependencies there first, then reference them in `build.gradle.kts`.
 
+## Unit Testing
+
+- **Mocking:** MockK
+- **Async:** Kotlin Coroutines Test
+- **Flow testing:** Turbine
+- **Coverage:** kotlinx-kover
+  - Compose views and Compose screens are excluded from coverage
+  - Minimum coverage threshold: **80%**
+
 ## Theme
 
 The app uses Material Design 3 with dynamic color support (Android 12+) and automatic light/dark mode. The theme is configured in `ui/theme/Theme.kt`.
+
+## Development Methodology
+
+This project uses **SDD (Specification-Driven Development)**. All feature work follows these phases:
+
+1. **Interview** — Ask the user about functional, technical, and documentation requirements before any implementation
+2. **Specification** — Enter plan mode, present the full implementation plan for review before any code is written
+3. **Implementation** — Execute step by step, phase-gated, only after the user approves the plan
+
+**Rules:**
+- Never advance to the next phase until the user explicitly says the current phase is ready
+- The user may return to any previous phase at any time (flow possibility, not a phase). When this happens, analyze the impact and replan forward from there
+- When development is finished, create a SDD documentation file for the feature in the project containing:
+  - Decisions made
+  - Technical features implemented
+  - Current status of the feature
+  - Last updated date
