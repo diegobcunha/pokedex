@@ -6,13 +6,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.PokemonDetailScreen
 import com.diegocunha.pokedex.feature.pokemon.presentation.list.PokemonListScreen
+import com.diegocunha.pokedex.feature.pokemon.presentation.list.PokemonListViewModel
+import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.pokemonGraph(
     onNavigateToDetail: (pokemonId: String) -> Unit,
     onNavigateToEvolution: (pokemonId: String) -> Unit
 ) {
     composable(PokemonRoutes.LIST) {
-        PokemonListScreen(onNavigateToDetail = onNavigateToDetail)
+        val viewModel: PokemonListViewModel = koinViewModel()
+        PokemonListScreen(
+            viewModel = viewModel,
+            onNavigateToDetail = onNavigateToDetail
+        )
     }
     composable(
         route = PokemonRoutes.DETAIL,
