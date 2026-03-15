@@ -5,22 +5,31 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.PokemonDetailScreen
+import com.diegocunha.pokedex.feature.pokemon.presentation.detail.PokemonDetailViewModel
 import com.diegocunha.pokedex.feature.pokemon.presentation.list.PokemonListScreen
+import com.diegocunha.pokedex.feature.pokemon.presentation.list.PokemonListViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 fun NavGraphBuilder.pokemonGraph(
     onNavigateToDetail: (pokemonId: String) -> Unit,
     onNavigateToEvolution: (pokemonId: String) -> Unit
 ) {
     composable(PokemonRoutes.LIST) {
-        PokemonListScreen(onNavigateToDetail = onNavigateToDetail)
+        val viewModel: PokemonListViewModel = koinViewModel()
+        PokemonListScreen(
+            viewModel = viewModel,
+            onNavigateToDetail = onNavigateToDetail
+        )
     }
     composable(
         route = PokemonRoutes.DETAIL,
         arguments = listOf(navArgument("pokemonId") { type = NavType.StringType })
     ) { backStackEntry ->
         val pokemonId = backStackEntry.arguments?.getString("pokemonId").orEmpty()
+        val viewModel: PokemonDetailViewModel = koinViewModel { parametersOf(pokemonId) }
         PokemonDetailScreen(
-            pokemonId = pokemonId,
+            viewModel = viewModel,
             onNavigateToEvolution = onNavigateToEvolution
         )
     }

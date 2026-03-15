@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.paging.compose)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 
@@ -51,4 +52,5 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.koin.test)
     testImplementation(libs.koin.test.junit4)
+    testImplementation(libs.androidx.paging.testing)
 }
