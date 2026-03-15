@@ -19,12 +19,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonEntry
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun PokemonListScreen(
@@ -49,6 +52,23 @@ fun PokemonListScreen(
         }
     }
 
+    PokemonListScreenContent(
+        lazyPagingItems = lazyPagingItems,
+        snackbarHostState = snackbarHostState,
+        onPokemonClick = { pokemon ->
+            viewModel.sendIntent(PokemonListIntent.SelectPokemon(id = pokemon.id))
+        },
+        onRetry = { lazyPagingItems.retry() }
+    )
+}
+
+@Composable
+private fun PokemonListScreenContent(
+    lazyPagingItems: LazyPagingItems<PokemonEntry>,
+    snackbarHostState: SnackbarHostState,
+    onPokemonClick: (PokemonEntry) -> Unit,
+    onRetry: () -> Unit
+) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
@@ -71,7 +91,7 @@ fun PokemonListScreen(
                         .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
-                    TextButton(onClick = { lazyPagingItems.retry() }) {
+                    TextButton(onClick = onRetry) {
                         Text(text = "Retry")
                     }
                 }
@@ -81,13 +101,84 @@ fun PokemonListScreen(
                 PokemonList(
                     lazyPagingItems = lazyPagingItems,
                     modifier = Modifier.padding(paddingValues),
-                    onPokemonClick = { pokemon ->
-                        viewModel.sendIntent(PokemonListIntent.SelectPokemon(id = pokemon.id))
-                    }
+                    onPokemonClick = onPokemonClick
                 )
             }
         }
     }
+}
+
+@Composable
+private fun PokemonListItem(
+    pokemon: PokemonEntry,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = "#${pokemon.id} ${pokemon.name.replaceFirstChar { it.uppercase() }}",
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PokemonListItemPreview() {
+    PokemonListItem(
+        pokemon = PokemonEntry(id = "1", name = "Bulbasaur"),
+        onClick = {}
+    )
+}
+
+@Preview(showBackground = true, name = "PokemonListScreen - List")
+@Composable
+private fun PokemonListScreenPreview() {
+    val items = listOf(
+        PokemonEntry(id = "1", name = "bulbasaur"),
+        PokemonEntry(id = "2", name = "ivysaur"),
+        PokemonEntry(id = "3", name = "venusaur"),
+    )
+    val lazyPagingItems = flowOf(PagingData.from(items)).collectAsLazyPagingItems()
+    PokemonListScreenContent(
+        lazyPagingItems = lazyPagingItems,
+        snackbarHostState = remember { SnackbarHostState() },
+        onPokemonClick = {},
+        onRetry = {}
+    )
+}
+
+@Preview(showBackground = true, name = "PokemonListScreen - Loading")
+@Composable
+private fun PokemonListScreenLoadingPreview() {
+    val lazyPagingItems = flowOf(PagingData.empty<PokemonEntry>()).collectAsLazyPagingItems()
+    PokemonListScreenContent(
+        lazyPagingItems = lazyPagingItems,
+        snackbarHostState = remember { SnackbarHostState() },
+        onPokemonClick = {},
+        onRetry = {}
+    )
+}
+
+@Preview(showBackground = true, name = "PokemonListScreen - Error")
+@Composable
+private fun PokemonListScreenErrorPreview() {
+    val lazyPagingItems = flowOf(
+        PagingData.empty<PokemonEntry>(
+            sourceLoadStates = androidx.paging.LoadStates(
+                refresh = LoadState.Error(Exception("Network error")),
+                prepend = LoadState.NotLoading(false),
+                append = LoadState.NotLoading(false)
+            )
+        )
+    ).collectAsLazyPagingItems()
+    PokemonListScreenContent(
+        lazyPagingItems = lazyPagingItems,
+        snackbarHostState = remember { SnackbarHostState() },
+        onPokemonClick = {},
+        onRetry = {}
+    )
 }
 
 @Composable
@@ -99,13 +190,7 @@ private fun PokemonList(
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(lazyPagingItems.itemCount) { index ->
             val pokemon = lazyPagingItems[index] ?: return@items
-            Text(
-                text = pokemon.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onPokemonClick(pokemon) }
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            )
+            PokemonListItem(pokemon = pokemon, onClick = { onPokemonClick(pokemon) })
             HorizontalDivider()
         }
 
