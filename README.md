@@ -75,6 +75,8 @@ Koin is used for DI throughout. Each module declares its own Koin module, and `P
 | DI | Koin | 4.0.4 |
 | Networking | Retrofit + OkHttp | 2.11.0 / 4.12.0 |
 | Serialization | kotlinx.serialization | 1.7.3 |
+| Pagination | Androidx Paging 3 | 3.3.6 |
+| Image Loading | Coil | 2.7.0 |
 | Async | Kotlin Coroutines | 1.9.0 |
 | Testing | MockK + Turbine + Coroutines Test | 1.13.13 / 1.2.0 |
 | Coverage | kotlinx-kover | 0.9.1 |
@@ -163,15 +165,36 @@ This approach demonstrates how AI can augment a senior developer's workflow with
 
 ---
 
+## Features
+
+### Pokemon List
+- Paginated list of all Pokémon fetched from PokéAPI (20 per page, infinite scroll via Paging 3)
+- Each entry shows the Pokémon number and name
+- Loading, error (with retry), and success states
+
+### Pokemon Detail
+- Full detail screen with header color derived from the Pokémon's primary type
+- Pokémon image loaded via Coil
+- Type chips (color-coded for all 18 types)
+- Physical stats: height and weight
+- Base stats with animated progress bars (HP, Attack, Defense, Sp. Atk, Sp. Def, Speed)
+- Abilities list
+- "View Evolutions" button navigating to the evolution screen
+
+### Evolutions
+- Route scaffold in place; full implementation pending
+
+---
+
 ## Project Status
 
 | Module | Status |
 |---|---|
-| `:core` | Complete — MVI base classes |
-| `:core-ui` | Complete — Material3 theme, design system |
-| `:datasource` | Complete — Retrofit/OkHttp infrastructure |
-| `:feature:pokemon` | In progress — navigation scaffold ready |
-| `:feature:evolutions` | In progress — navigation scaffold ready |
+| `:core` | Complete — MVI base classes, Resource wrapper, DispatchersProvider |
+| `:core-ui` | Complete — Material3 theme, dynamic color (Android 12+) |
+| `:datasource` | Complete — Retrofit/OkHttp, HeaderInterceptor, SafeApiCall, PokemonRepository |
+| `:feature:pokemon` | Complete — list (pagination) + detail (types, stats, abilities, image) + full unit tests |
+| `:feature:evolutions` | Scaffold only — route and placeholder screen in place, feature pending |
 
 ---
 
