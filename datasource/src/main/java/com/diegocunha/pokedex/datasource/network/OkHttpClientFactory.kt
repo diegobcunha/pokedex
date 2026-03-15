@@ -6,14 +6,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 fun createOkHttpClient(isDebug: Boolean): OkHttpClient {
     return OkHttpClient.Builder()
         .addInterceptor(HeaderInterceptor())
-        .apply {
-            if (isDebug) {
-                addInterceptor(
-                    HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    }
-                )
-            }
-        }
+        .addInterceptor(
+            HttpLoggingInterceptor().setLevel(
+                level =
+                    if (isDebug) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            )
+        )
         .build()
 }
