@@ -25,7 +25,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     pokemonGraph(
                         onNavigateToDetail = { id -> navController.navigate(PokemonRoutes.detail(id)) },
-                        onNavigateToEvolution = { id -> navController.navigate(EvolutionRoutes.evolution(id)) }
+                        onNavigateToEvolution = { id -> navController.navigate(EvolutionRoutes.evolution(id)) },
+                        onNavigateBack = { navController.popBackStack() }
                     )
                     evolutionGraph()
                 }
