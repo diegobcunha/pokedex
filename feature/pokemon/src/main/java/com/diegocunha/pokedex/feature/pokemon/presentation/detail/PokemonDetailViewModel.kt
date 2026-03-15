@@ -28,7 +28,7 @@ class PokemonDetailViewModel(
             when (val result = repository.getPokemonDetail(pokemonId.toInt())) {
                 is Resource.Success -> updateState { PokemonDetailState.Success(result.data.toDomain()) }
                 is Resource.Error -> updateState { PokemonDetailState.Error }
-                is Resource.Loading -> Unit
+                is Resource.Loading -> updateState { PokemonDetailState.Loading }
             }
         }
     }
