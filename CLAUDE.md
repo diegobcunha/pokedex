@@ -57,6 +57,12 @@ All dependency versions are managed via the version catalog at `gradle/libs.vers
 
 The app uses Material Design 3 with dynamic color support (Android 12+) and automatic light/dark mode. The theme is configured in `ui/theme/Theme.kt`.
 
+## Architecture Rules
+
+**Clean Architecture DTO rule:** DTOs from `:datasource` must never appear in ViewModels or Composables. Each feature owns its domain models in `feature/<name>/domain/model/` and mappers in `feature/<name>/domain/mapper/`. PagingSources live in `feature/<name>/data/paging/` and map DTOs to domain models inside `load()`. For non-paging repository calls, the ViewModel applies the mapper directly after receiving the `Resource`.
+
+**UseCase rule:** Create a UseCase only when: (1) non-trivial business logic exists beyond fetching and mapping, (2) multiple repositories are orchestrated, or (3) logic is shared across two or more ViewModels. Direct repository calls from the ViewModel are the default.
+
 ## Development Methodology
 
 This project uses **SDD (Specification-Driven Development)**. All feature work follows these phases:

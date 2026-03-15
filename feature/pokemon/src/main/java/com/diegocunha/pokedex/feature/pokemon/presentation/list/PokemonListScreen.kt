@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.diegocunha.pokedex.datasource.model.PokemonEntryResponse
+import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonEntry
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -82,12 +82,7 @@ fun PokemonListScreen(
                     lazyPagingItems = lazyPagingItems,
                     modifier = Modifier.padding(paddingValues),
                     onPokemonClick = { pokemon ->
-                        viewModel.sendIntent(
-                            PokemonListIntent.SelectPokemon(
-                                name = pokemon.name,
-                                url = pokemon.url
-                            )
-                        )
+                        viewModel.sendIntent(PokemonListIntent.SelectPokemon(id = pokemon.id))
                     }
                 )
             }
@@ -97,9 +92,9 @@ fun PokemonListScreen(
 
 @Composable
 private fun PokemonList(
-    lazyPagingItems: LazyPagingItems<PokemonEntryResponse>,
+    lazyPagingItems: LazyPagingItems<PokemonEntry>,
     modifier: Modifier = Modifier,
-    onPokemonClick: (PokemonEntryResponse) -> Unit
+    onPokemonClick: (PokemonEntry) -> Unit
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(lazyPagingItems.itemCount) { index ->

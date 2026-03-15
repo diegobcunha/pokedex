@@ -6,7 +6,7 @@ import com.diegocunha.pokedex.core.mvi.MviState
 object PokemonListState : MviState
 
 sealed interface PokemonListIntent : MviIntent {
-    data class SelectPokemon(val name: String, val url: String) : PokemonListIntent
+    data class SelectPokemon(val id: String) : PokemonListIntent
 }
 
 sealed interface PokemonListEffect {
