@@ -11,6 +11,13 @@ fun PokemonEntryResponse.toDomain(): PokemonEntry = PokemonEntry(
     name = name
 )
 
+fun PokemonEntryResponse.toDomain(detail: PokemonResponse): PokemonEntry = PokemonEntry(
+    id = url.trimEnd('/').substringAfterLast('/'),
+    name = name,
+    imageUrl = detail.sprites.frontDefault,
+    types = detail.types.sortedBy { it.slot }.map { it.type.name }
+)
+
 fun PokemonResponse.toDomain(): Pokemon = Pokemon(
     id = id.toString(),
     name = name,

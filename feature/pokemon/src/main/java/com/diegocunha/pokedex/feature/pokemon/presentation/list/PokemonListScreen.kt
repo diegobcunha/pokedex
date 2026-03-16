@@ -1,14 +1,18 @@
 package com.diegocunha.pokedex.feature.pokemon.presentation.list
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -19,13 +23,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import coil.compose.AsyncImage
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonEntry
+import com.diegocunha.pokedex.feature.pokemon.presentation.common.PokemonType
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
 
@@ -114,18 +121,47 @@ private fun PokemonListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Text(
-        text = "#${pokemon.id} ${pokemon.name.replaceFirstChar { it.uppercase() }}",
+    val typeColor = PokemonType.fromName(pokemon.types.firstOrNull().orEmpty()).color
+    Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = typeColor),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = pokemon.imageUrl,
+                contentDescription = pokemon.name,
+                modifier = Modifier.size(80.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = pokemon.name.replaceFirstChar { it.uppercase() },
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "PokemonListItem - with type and image")
+@Composable
+private fun PokemonListItemEnrichedPreview() {
+    PokemonListItem(
+        pokemon = PokemonEntry(id = "1", name = "Bulbasaur", types = listOf("grass"), imageUrl = null),
+        onClick = {}
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "PokemonListItem - fallback (no type, no image)")
 @Composable
-private fun PokemonListItemPreview() {
+private fun PokemonListItemFallbackPreview() {
     PokemonListItem(
         pokemon = PokemonEntry(id = "1", name = "Bulbasaur"),
         onClick = {}
@@ -136,9 +172,9 @@ private fun PokemonListItemPreview() {
 @Composable
 private fun PokemonListScreenPreview() {
     val items = listOf(
-        PokemonEntry(id = "1", name = "bulbasaur"),
-        PokemonEntry(id = "2", name = "ivysaur"),
-        PokemonEntry(id = "3", name = "venusaur"),
+        PokemonEntry(id = "1", name = "bulbasaur", types = listOf("grass")),
+        PokemonEntry(id = "2", name = "ivysaur", types = listOf("grass", "poison")),
+        PokemonEntry(id = "4", name = "charmander", types = listOf("fire")),
     )
     val lazyPagingItems = flowOf(PagingData.from(items)).collectAsLazyPagingItems()
     PokemonListScreenContent(
@@ -191,7 +227,6 @@ private fun PokemonList(
         items(lazyPagingItems.itemCount) { index ->
             val pokemon = lazyPagingItems[index] ?: return@items
             PokemonListItem(pokemon = pokemon, onClick = { onPokemonClick(pokemon) })
-            HorizontalDivider()
         }
 
         if (lazyPagingItems.loadState.append is LoadState.Loading) {

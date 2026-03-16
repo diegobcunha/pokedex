@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.diegocunha.pokedex.coreui.theme.PokedexTheme
 import com.diegocunha.pokedex.feature.pokemon.domain.model.Pokemon
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonStat
+import com.diegocunha.pokedex.feature.pokemon.presentation.common.PokemonType
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.PokemonHeader
-import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.PokemonType
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.StatBar
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.TypeChip
 import kotlinx.coroutines.flow.collectLatest
