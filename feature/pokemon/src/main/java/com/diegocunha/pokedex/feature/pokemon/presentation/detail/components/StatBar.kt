@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import com.diegocunha.pokedex.coreui.theme.spacing
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonStat
 
 private const val STAT_MAX = 300
@@ -29,7 +29,7 @@ fun StatBar(stat: PokemonStat, modifier: Modifier = Modifier) {
             text = statAbbreviation(stat.name),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.width(48.dp)
+            modifier = Modifier.width(MaterialTheme.spacing.xxl)
         )
         LinearProgressIndicator(
             progress = { (stat.value / STAT_MAX.toFloat()).coerceIn(0f, 1f) },
@@ -38,7 +38,7 @@ fun StatBar(stat: PokemonStat, modifier: Modifier = Modifier) {
             trackColor = color.copy(alpha = 0.2f),
             strokeCap = StrokeCap.Round
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
         Text(
             text = "${stat.value}/$STAT_MAX",
             style = MaterialTheme.typography.labelSmall,

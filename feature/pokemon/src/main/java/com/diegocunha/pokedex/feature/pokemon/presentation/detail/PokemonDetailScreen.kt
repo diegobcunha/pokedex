@@ -33,8 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.diegocunha.pokedex.coreui.theme.PokedexTheme
+import com.diegocunha.pokedex.coreui.theme.spacing
 import com.diegocunha.pokedex.feature.pokemon.domain.model.Pokemon
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonStat
 import com.diegocunha.pokedex.feature.pokemon.presentation.common.PokemonType
@@ -120,7 +120,7 @@ private fun PokemonDetailContent(
                         text = "#${pokemon.id.padStart(3, '0')}",
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
-                        modifier = Modifier.padding(end = 16.dp)
+                        modifier = Modifier.padding(end = MaterialTheme.spacing.md)
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -135,8 +135,8 @@ private fun PokemonDetailContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(MaterialTheme.spacing.md),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm + MaterialTheme.spacing.xs)
         ) {
             Text(
                 text = pokemon.name.lowercase(),
@@ -144,7 +144,7 @@ private fun PokemonDetailContent(
                 fontWeight = FontWeight.Bold
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)) {
                 pokemon.types.forEach { type ->
                     TypeChip(type = type)
                 }
@@ -186,13 +186,13 @@ private fun PokemonDetailContent(
                 fontWeight = FontWeight.Bold
             )
 
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)) {
                 pokemon.stats.forEach { stat ->
                     StatBar(stat = stat)
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             Button(
                 onClick = onEvolutionClick,

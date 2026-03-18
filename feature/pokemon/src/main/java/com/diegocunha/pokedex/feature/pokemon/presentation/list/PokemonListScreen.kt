@@ -31,6 +31,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import com.diegocunha.pokedex.coreui.theme.spacing
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonEntry
 import com.diegocunha.pokedex.feature.pokemon.presentation.common.PokemonType
 import kotlinx.coroutines.flow.collectLatest
@@ -125,14 +126,14 @@ private fun PokemonListItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+            .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.xs),
         colors = CardDefaults.cardColors(containerColor = typeColor),
         onClick = onClick
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(MaterialTheme.spacing.sm + MaterialTheme.spacing.xs),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -140,7 +141,7 @@ private fun PokemonListItem(
                 contentDescription = pokemon.name,
                 modifier = Modifier.size(80.dp)
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm + MaterialTheme.spacing.xs))
             Text(
                 text = pokemon.name.replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.titleMedium,
@@ -234,7 +235,7 @@ private fun PokemonList(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(MaterialTheme.spacing.md),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp))
