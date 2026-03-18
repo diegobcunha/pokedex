@@ -39,30 +39,47 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run tests and generate coverage report
-        run: ./gradlew test koverXmlReport koverHtmlReport
+        run: ./gradlew koverXmlReportDebug koverHtmlReportDebug
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
-          path: build/reports/kover/
+          path: "**/build/reports/kover/**"
+          if-no-files-found: warn
 
       - name: Extract coverage percentage
         id: extract
         run: |
-          COVERAGE=$(python3 - <<'EOF'
+          # Search root aggregate report first, then fall back to any module report
+          XML_REPORT=$(find build/reports/kover -name "*.xml" 2>/dev/null | head -1)
+          if [ -z "$XML_REPORT" ]; then
+            XML_REPORT=$(find . -path "*/build/reports/kover*" -name "*.xml" 2>/dev/null | head -1)
+          fi
+          if [ -z "$XML_REPORT" ]; then
+            echo "::error::No Kover XML coverage report found. Check that koverXmlReportDebug succeeded."
+            exit 1
+          fi
+          echo "Found report at: $XML_REPORT"
+          COVERAGE=$(python3 - <<EOF
           import xml.etree.ElementTree as ET
-          tree = ET.parse('build/reports/kover/report.xml')
-          root = tree.getroot()
-          for counter in root.findall('counter'):
-              if counter.get('type') == 'INSTRUCTION':
-                  missed = int(counter.get('missed'))
-                  covered = int(counter.get('covered'))
-                  total = missed + covered
-                  pct = round((covered / total) * 100) if total > 0 else 0
-                  print(pct)
-                  break
+          import sys
+          try:
+              tree = ET.parse('$XML_REPORT')
+              root = tree.getroot()
+              for counter in root.findall('counter'):
+                  if counter.get('type') == 'INSTRUCTION':
+                      missed = int(counter.get('missed'))
+                      covered = int(counter.get('covered'))
+                      total = missed + covered
+                      pct = round((covered / total) * 100) if total > 0 else 0
+                      print(pct)
+                      sys.exit(0)
+              print(0)
+          except Exception as e:
+              print(f"Error parsing coverage report: {e}", file=sys.stderr)
+              sys.exit(1)
           EOF
           )
           echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
@@ -93,4 +110,4 @@ jobs:
           git push
 
       - name: Enforce coverage threshold
-        run: ./gradlew koverVerify
+        run: ./gradlew koverVerifyDebug
