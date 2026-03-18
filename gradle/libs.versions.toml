@@ -20,6 +20,8 @@ kover = "0.9.1"
 navigation = "2.9.7"
 paging = "3.3.6"
 coil = "2.7.0"
+room = "2.7.1"
+ksp  = "2.3.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -57,6 +59,11 @@ androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", 
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+androidx-room-runtime  = { group = "androidx.room", name = "room-runtime",  version.ref = "room" }
+androidx-room-ktx      = { group = "androidx.room", name = "room-ktx",      version.ref = "room" }
+androidx-room-paging   = { group = "androidx.room", name = "room-paging",   version.ref = "room" }
+androidx-room-testing  = { group = "androidx.room", name = "room-testing",  version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -65,3 +72,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+ksp   = { id = "com.google.devtools.ksp", version.ref = "ksp" }
