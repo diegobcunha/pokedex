@@ -39,7 +39,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run tests and generate coverage report
-        run: ./gradlew koverXmlReportDebug koverHtmlReportDebug
+        run: ./gradlew testDebugUnitTest koverXmlReportDebug koverHtmlReportDebug
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
