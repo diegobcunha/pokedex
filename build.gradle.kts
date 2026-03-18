@@ -9,6 +9,7 @@ plugins {
 }
 
 dependencies {
+    kover(project("app"))
     kover(project(":core"))
     kover(project(":datasource"))
     kover(project(":feature:pokemon"))
