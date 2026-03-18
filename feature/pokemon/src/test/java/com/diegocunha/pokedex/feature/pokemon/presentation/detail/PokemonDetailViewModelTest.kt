@@ -12,10 +12,11 @@ import com.diegocunha.pokedex.datasource.model.PokemonType
 import com.diegocunha.pokedex.datasource.model.PokemonTypeSlot
 import com.diegocunha.pokedex.datasource.repository.PokemonRepository
 import com.diegocunha.pokedex.feature.pokemon.domain.mapper.toDomain
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -44,7 +45,7 @@ class PokemonDetailViewModelTest {
 
     @Test
     fun `init emits Loading then Success when repository returns success`() = runTest {
-        coEvery { repository.getPokemonDetail(1) } returns Resource.Success(fakePokemon())
+        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Loading, Resource.Success(fakePokemon()))
         val viewModel = PokemonDetailViewModel("1", repository)
 
         testDispatcher.scheduler.advanceUntilIdle()
@@ -56,7 +57,7 @@ class PokemonDetailViewModelTest {
 
     @Test
     fun `init emits Error when repository returns error`() = runTest {
-        coEvery { repository.getPokemonDetail(1) } returns Resource.Error(RuntimeException("error"))
+        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Loading, Resource.Error(RuntimeException("error")))
         val viewModel = PokemonDetailViewModel("1", repository)
 
         testDispatcher.scheduler.advanceUntilIdle()
@@ -66,9 +67,9 @@ class PokemonDetailViewModelTest {
 
     @Test
     fun `Retry intent re-fetches and updates state to Success`() = runTest {
-        coEvery { repository.getPokemonDetail(1) } returnsMany listOf(
-            Resource.Error(RuntimeException("first failure")),
-            Resource.Success(fakePokemon())
+        every { repository.getPokemonDetail(1) } returnsMany listOf(
+            flowOf(Resource.Loading, Resource.Error(RuntimeException("first failure"))),
+            flowOf(Resource.Loading, Resource.Success(fakePokemon()))
         )
         val viewModel = PokemonDetailViewModel("1", repository)
         testDispatcher.scheduler.advanceUntilIdle()
@@ -82,7 +83,7 @@ class PokemonDetailViewModelTest {
 
     @Test
     fun `NavigateToEvolution intent emits NavigateToEvolution effect when state is Success`() = runTest {
-        coEvery { repository.getPokemonDetail(1) } returns Resource.Success(fakePokemon())
+        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Loading, Resource.Success(fakePokemon()))
         val viewModel = PokemonDetailViewModel("1", repository)
         testDispatcher.scheduler.advanceUntilIdle()
 

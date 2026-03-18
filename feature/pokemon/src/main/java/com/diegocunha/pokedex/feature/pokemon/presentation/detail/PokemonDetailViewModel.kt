@@ -24,11 +24,16 @@ class PokemonDetailViewModel(
 
     private fun loadDetail() {
         viewModelScope.launch {
-            updateState { PokemonDetailState.Loading }
-            when (val result = repository.getPokemonDetail(pokemonId.toInt())) {
-                is Resource.Success -> updateState { PokemonDetailState.Success(result.data.toDomain()) }
-                is Resource.Error -> updateState { PokemonDetailState.Error }
-                is Resource.Loading -> updateState { PokemonDetailState.Loading }
+            repository.getPokemonDetail(pokemonId.toInt()).collect { resource ->
+                when (resource) {
+                    is Resource.Loading -> if (state.value !is PokemonDetailState.Success) {
+                        updateState { PokemonDetailState.Loading }
+                    }
+                    is Resource.Success -> updateState { PokemonDetailState.Success(resource.data.toDomain()) }
+                    is Resource.Error -> if (state.value !is PokemonDetailState.Success) {
+                        updateState { PokemonDetailState.Error }
+                    }
+                }
             }
         }
     }
