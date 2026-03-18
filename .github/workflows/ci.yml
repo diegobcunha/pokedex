@@ -39,7 +39,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run tests and generate coverage report
-        run: ./gradlew test koverXmlReport koverHtmlReport koverVerify
+        run: ./gradlew test koverXmlReport koverHtmlReport
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -91,3 +91,6 @@ jobs:
           git add README.md
           git diff --staged --quiet || git commit -m "ci: update coverage badge to ${COVERAGE}% [skip ci]"
           git push
+
+      - name: Enforce coverage threshold
+        run: ./gradlew koverVerify
