@@ -16,7 +16,7 @@ abstract class BaseViewModel<State : MviState, Intent : MviIntent>(
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<State> = _state.asStateFlow()
 
-    private val _intents = Channel<Intent>(Channel.UNLIMITED)
+    private val _intents = Channel<Intent>(Channel.BUFFERED)
 
     init {
         viewModelScope.launch {
