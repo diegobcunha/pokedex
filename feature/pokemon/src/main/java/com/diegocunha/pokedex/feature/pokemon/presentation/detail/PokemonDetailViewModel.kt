@@ -5,9 +5,10 @@ import com.diegocunha.pokedex.core.Resource
 import com.diegocunha.pokedex.core.mvi.BaseViewModel
 import com.diegocunha.pokedex.datasource.repository.PokemonRepository
 import com.diegocunha.pokedex.feature.pokemon.domain.mapper.toDomain
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class PokemonDetailViewModel(
@@ -15,8 +16,12 @@ class PokemonDetailViewModel(
     private val repository: PokemonRepository
 ) : BaseViewModel<PokemonDetailState, PokemonDetailIntent>(PokemonDetailState.Loading) {
 
-    private val _effects = Channel<PokemonDetailEffect>(Channel.UNLIMITED)
-    val effects: Flow<PokemonDetailEffect> = _effects.receiveAsFlow()
+    private val _effects = MutableSharedFlow<PokemonDetailEffect>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val effects: Flow<PokemonDetailEffect> = _effects.asSharedFlow()
 
     init {
         loadDetail()
@@ -45,7 +50,7 @@ class PokemonDetailViewModel(
                 val current = state.value
                 if (current is PokemonDetailState.Success) {
                     viewModelScope.launch {
-                        _effects.send(PokemonDetailEffect.NavigateToEvolution(current.pokemon.id))
+                        _effects.emit(PokemonDetailEffect.NavigateToEvolution(current.pokemon.id))
                     }
                 }
             }

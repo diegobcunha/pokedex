@@ -20,25 +20,66 @@ To run a single test class:
 
 ## Project Overview
 
-This is a Android Pokedex app in early development. The current codebase is minimal — only theme setup and a placeholder `Greeting` composable exist. The project is ready for feature development.
+Android Pokedex app with Pokemon list/detail features implemented. Architecture is multi-module clean architecture with MVI pattern, Paging 3, Room caching, and 100% Compose UI.
+
+## Module Structure
+
+```
+:app                  — Application entry point, NavHost, Koin initialization
+:core                 — MVI base classes, Resource sealed class, DispatchersProvider
+:core-ui              — Material3 theme, shared Compose components, Spacing system
+:datasource           — Retrofit API, Room database, Repository, DTOs, DAOs
+:feature:pokemon      — Pokemon list + detail (fully implemented)
+:feature:evolutions   — Evolution display (placeholder only)
+```
 
 ## Architecture & Technology
 
 - **UI:** 100% Jetpack Compose with Material Design 3, no XML layouts
+- **Pattern:** MVI via `BaseViewModel<State, Intent>` in `:core`
 - **Language:** Kotlin 2.2.10
 - **Min SDK:** 24 (Android 7.0), Target/Compile SDK: 36
-- **Module structure:** Single `:app` module
 - **Package root:** `com.diegocunha.pokedex`
-- **DI framework:** Insert-Koin
-- **Networking:** Retrofit + OkHttp to network call
-- **No local DB yet** — to be added as features require it
+- **DI:** Koin 4.0.4 — modules loaded in `PokedexApplication`
+- **Networking:** Retrofit 2.11.0 + OkHttp 4.12.0 + Kotlinx Serialization
+- **Database:** Room 2.7.1 with 24-hour TTL caching strategy
+- **Pagination:** Paging 3 with `RemoteMediator` pattern
+- **Image loading:** Coil 2.7.0
+- **Navigation:** AndroidX Navigation Compose 2.9.7
 
 ## Key Files
 
-- `app/src/main/java/com/diegocunha/pokedex/MainActivity.kt` — Entry point
-- `app/src/main/java/com/diegocunha/pokedex/ui/theme/` — Material3 theme (Color, Theme, Type)
+- `app/src/main/java/com/diegocunha/pokedex/MainActivity.kt` — Entry point with NavHost
+- `app/src/main/java/com/diegocunha/pokedex/PokedexApplication.kt` — Koin setup
+- `core/src/main/java/com/diegocunha/pokedex/core/mvi/BaseViewModel.kt` — MVI base
+- `core/src/main/java/com/diegocunha/pokedex/core/Resource.kt` — Success/Error/Loading sealed class
+- `datasource/src/main/java/com/diegocunha/pokedex/datasource/network/PokemonApiService.kt` — Retrofit API
+- `datasource/src/main/java/com/diegocunha/pokedex/datasource/repository/PokemonRepositoryImpl.kt` — Caching repository
+- `core-ui/src/main/java/com/diegocunha/pokedex/coreui/theme/` — Material3 theme
 - `gradle/libs.versions.toml` — Centralized version catalog for all dependencies
-- `app/build.gradle.kts` — App module build configuration (Java 11, Compose enabled)
+
+## Feature: Pokemon (Implemented)
+
+**List:** Paginated with Paging 3 + `PokemonRemoteMediator`. Shows name, image, type color.
+**Detail:** Full view with image, height/weight, type chips, stat bars, abilities. 24-hour TTL cache.
+**Navigation routes:** `feature/pokemon/navigation/PokemonRoutes.kt`
+**Domain models:** `feature/pokemon/domain/model/` (Pokemon, PokemonEntry, PokemonStat)
+**Mappers:** `feature/pokemon/domain/mapper/PokemonMapper.kt`
+
+## Feature: Evolutions (Placeholder)
+
+Evolution screen renders `"Evolution for: {pokemonId}"`. API service has the endpoint. Not yet implemented.
+
+## Data Layer
+
+**API endpoints** (PokeAPI):
+- `GET /pokemon?limit={limit}&offset={offset}` — paginated list
+- `GET /pokemon/{id}` — detail by ID
+- `GET /evolution-chain/{id}` — evolution (unused)
+
+**Room entities:** `PokemonListEntryEntity`, `PokemonDetailEntity` (with `lastFetched` TTL), `RemoteKeyEntity`
+
+**DTOs live exclusively in `:datasource`** — never leak into ViewModels or Composables.
 
 ## Dependencies
 
@@ -55,7 +96,7 @@ All dependency versions are managed via the version catalog at `gradle/libs.vers
 
 ## Theme
 
-The app uses Material Design 3 with dynamic color support (Android 12+) and automatic light/dark mode. The theme is configured in `ui/theme/Theme.kt`.
+Material Design 3 with dynamic color support (Android 12+) and automatic light/dark mode. Theme in `core-ui/src/main/java/com/diegocunha/pokedex/coreui/theme/`. Custom `Spacing` via `CompositionLocal`. 18 Pokemon types with mapped colors in `feature/pokemon/presentation/common/PokemonType.kt`.
 
 ## Architecture Rules
 
