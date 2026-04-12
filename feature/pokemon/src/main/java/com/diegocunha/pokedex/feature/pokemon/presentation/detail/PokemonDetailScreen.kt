@@ -146,7 +146,7 @@ private fun PokemonDetailContent(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm + MaterialTheme.spacing.xs)
         ) {
             Text(
-                text = pokemon.name.lowercase(),
+                text = pokemon.name.replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold
             )
