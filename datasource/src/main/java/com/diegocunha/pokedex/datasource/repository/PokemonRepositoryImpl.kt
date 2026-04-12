@@ -24,8 +24,6 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 
-private val TTL_MS = 24 * 60 * 60 * 1000L
-
 @Serializable
 private data class CachedStat(val name: String, val baseStat: Int)
 
@@ -44,20 +42,16 @@ class PokemonRepositoryImpl(
 
         if (cached != null) {
             emit(Resource.Success(cached.toPokemonResponse()))
-            if (System.currentTimeMillis() - cached.lastFetched < TTL_MS) return@flow
+            return@flow
         }
 
         when (val result = safeApiCall(dispatchersProvider) { apiService.getPokemonDetail(id) }) {
             is Resource.Success -> {
                 val newEntity = result.data.toDetailEntity(System.currentTimeMillis())
                 pokemonDetailDao.insert(newEntity)
-                if (cached == null || newEntity != cached.copy(lastFetched = newEntity.lastFetched)) {
-                    emit(Resource.Success(result.data))
-                }
+                emit(Resource.Success(result.data))
             }
-            is Resource.Error -> {
-                if (cached == null) emit(Resource.Error(result.exception))
-            }
+            is Resource.Error -> emit(Resource.Error(result.exception))
             is Resource.Loading -> Unit
         }
     }

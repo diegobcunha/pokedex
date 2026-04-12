@@ -17,4 +17,10 @@ interface PokemonListEntryDao {
 
     @Query("DELETE FROM pokemon_list_entry")
     suspend fun clearAll()
+
+    @Query("SELECT COUNT(*) FROM pokemon_list_entry")
+    suspend fun count(): Int
+
+    @Query("DELETE FROM pokemon_list_entry WHERE CAST(id AS INTEGER) > :offset")
+    suspend fun deleteEntriesAfterOffset(offset: Int)
 }

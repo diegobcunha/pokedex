@@ -60,7 +60,7 @@ class PokemonRepositoryImplTest {
         abilities = listOf(PokemonAbilitySlot(PokemonAbility("overgrow", "url"), false, 1))
     )
 
-    private fun fakeCachedEntity(lastFetched: Long = System.currentTimeMillis()) = PokemonDetailEntity(
+    private fun fakeCachedEntity() = PokemonDetailEntity(
         id = "1",
         name = "bulbasaur",
         height = 7,
@@ -69,13 +69,12 @@ class PokemonRepositoryImplTest {
         stats = """[{"name":"hp","baseStat":45}]""",
         abilities = """["overgrow"]""",
         imageUrl = "front_url",
-        lastFetched = lastFetched
+        lastFetched = System.currentTimeMillis()
     )
 
     @Test
-    fun `cache hit fresh - emits Loading then Success from cache, no network call`() = runTest {
-        val freshEntity = fakeCachedEntity(lastFetched = System.currentTimeMillis())
-        coEvery { mockDetailDao.getById("1") } returns freshEntity
+    fun `cache hit - emits Loading then Success from cache without network call`() = runTest {
+        coEvery { mockDetailDao.getById("1") } returns fakeCachedEntity()
 
         repository().getPokemonDetail(1).test {
             assertTrue(awaitItem() is Resource.Loading)
@@ -89,7 +88,7 @@ class PokemonRepositoryImplTest {
     }
 
     @Test
-    fun `cache miss - emits Loading then Success from network, saves to DB`() = runTest {
+    fun `cache miss - emits Loading then Success from network and saves to DB`() = runTest {
         val pokemon = fakePokemon()
         coEvery { mockDetailDao.getById("1") } returns null
         coEvery { mockApiService.getPokemonDetail(1) } returns pokemon
@@ -106,65 +105,13 @@ class PokemonRepositoryImplTest {
     }
 
     @Test
-    fun `cache hit stale data changed - emits Loading, cached Success, then network Success`() = runTest {
-        val staleEntity = fakeCachedEntity(lastFetched = System.currentTimeMillis() - 25 * 60 * 60 * 1000L)
-        val newPokemon = fakePokemon().copy(name = "ivysaur")
-        coEvery { mockDetailDao.getById("1") } returns staleEntity
-        coEvery { mockApiService.getPokemonDetail(1) } returns newPokemon
-
-        repository().getPokemonDetail(1).test {
-            assertTrue(awaitItem() is Resource.Loading)
-            val cached = awaitItem()
-            assertTrue(cached is Resource.Success)
-            assertEquals("bulbasaur", (cached as Resource.Success).data.name)
-            val updated = awaitItem()
-            assertTrue(updated is Resource.Success)
-            assertEquals("ivysaur", (updated as Resource.Success).data.name)
-            awaitComplete()
-        }
-    }
-
-    @Test
-    fun `cache hit stale data same - emits Loading and cached Success, no second emission`() = runTest {
-        val staleEntity = fakeCachedEntity(lastFetched = System.currentTimeMillis() - 25 * 60 * 60 * 1000L)
-        val samePokemon = fakePokemon() // same data as cached
-        coEvery { mockDetailDao.getById("1") } returns staleEntity
-        coEvery { mockApiService.getPokemonDetail(1) } returns samePokemon
-
-        repository().getPokemonDetail(1).test {
-            assertTrue(awaitItem() is Resource.Loading)
-            val cached = awaitItem()
-            assertTrue(cached is Resource.Success)
-            assertEquals("bulbasaur", (cached as Resource.Success).data.name)
-            awaitComplete()
-        }
-    }
-
-    @Test
-    fun `network error no cache - emits Loading then Error`() = runTest {
-        val exception = RuntimeException("Network error")
+    fun `cache miss network error - emits Loading then Error`() = runTest {
         coEvery { mockDetailDao.getById("1") } returns null
-        coEvery { mockApiService.getPokemonDetail(1) } throws exception
-
-        repository().getPokemonDetail(1).test {
-            assertTrue(awaitItem() is Resource.Loading)
-            val error = awaitItem()
-            assertTrue(error is Resource.Error)
-            awaitComplete()
-        }
-    }
-
-    @Test
-    fun `network error with cache hit - emits Loading then cached Success, no Error`() = runTest {
-        val staleEntity = fakeCachedEntity(lastFetched = System.currentTimeMillis() - 25 * 60 * 60 * 1000L)
-        coEvery { mockDetailDao.getById("1") } returns staleEntity
         coEvery { mockApiService.getPokemonDetail(1) } throws RuntimeException("Network error")
 
         repository().getPokemonDetail(1).test {
             assertTrue(awaitItem() is Resource.Loading)
-            val cached = awaitItem()
-            assertTrue(cached is Resource.Success)
-            assertEquals("bulbasaur", (cached as Resource.Success).data.name)
+            assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
