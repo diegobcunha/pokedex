@@ -2,12 +2,14 @@ package com.diegocunha.pokedex.feature.pokemon.presentation.list
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import androidx.sqlite.db.SupportSQLiteQuery
 import app.cash.turbine.test
 import com.diegocunha.pokedex.core.coroutines.DispatchersProvider
 import com.diegocunha.pokedex.datasource.db.dao.PokemonListEntryDao
 import com.diegocunha.pokedex.datasource.db.entity.PokemonListEntryEntity
 import com.diegocunha.pokedex.datasource.sync.PokemonSyncManager
 import com.diegocunha.pokedex.datasource.sync.SyncState
+import com.diegocunha.pokedex.feature.pokemon.presentation.common.PokemonType
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -16,11 +18,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -49,6 +53,7 @@ class PokemonListViewModelTest {
     }
     private val mockListEntryDao = mockk<PokemonListEntryDao>(relaxed = true) {
         every { pagingSource() } returns FakeEmptyPagingSource()
+        every { pagingSourceFiltered(any()) } returns FakeEmptyPagingSource()
     }
 
     @Before
@@ -130,5 +135,133 @@ class PokemonListViewModelTest {
             awaitItem()
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    // --- Search & Filter tests ---
+
+    @Test
+    fun `initial searchFilter is empty with no active filter`() = runTest {
+        val vm = viewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val filter = vm.searchFilter.value
+        assertEquals("", filter.query)
+        assertTrue(filter.selectedTypes.isEmpty())
+        assertFalse(filter.isActive)
+    }
+
+    @Test
+    fun `UpdateQuery intent updates searchFilter query immediately`() = runTest {
+        val vm = viewModel()
+
+        vm.sendIntent(PokemonListIntent.UpdateQuery("char"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals("char", vm.searchFilter.value.query)
+    }
+
+    @Test
+    fun `UpdateQuery marks filter as active when query is not blank`() = runTest {
+        val vm = viewModel()
+
+        vm.sendIntent(PokemonListIntent.UpdateQuery("pikachu"))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue(vm.searchFilter.value.isActive)
+    }
+
+    @Test
+    fun `ToggleTypeFilter adds type to selectedTypes`() = runTest {
+        val vm = viewModel()
+
+        vm.sendIntent(PokemonListIntent.ToggleTypeFilter(PokemonType.FIRE))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue(PokemonType.FIRE in vm.searchFilter.value.selectedTypes)
+        assertTrue(vm.searchFilter.value.isActive)
+    }
+
+    @Test
+    fun `ToggleTypeFilter removes type when already selected`() = runTest {
+        val vm = viewModel()
+
+        vm.sendIntent(PokemonListIntent.ToggleTypeFilter(PokemonType.FIRE))
+        testDispatcher.scheduler.advanceUntilIdle()
+        vm.sendIntent(PokemonListIntent.ToggleTypeFilter(PokemonType.FIRE))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertFalse(PokemonType.FIRE in vm.searchFilter.value.selectedTypes)
+    }
+
+    @Test
+    fun `ToggleTypeFilter supports multiple selected types`() = runTest {
+        val vm = viewModel()
+
+        vm.sendIntent(PokemonListIntent.ToggleTypeFilter(PokemonType.FIRE))
+        vm.sendIntent(PokemonListIntent.ToggleTypeFilter(PokemonType.FLYING))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val types = vm.searchFilter.value.selectedTypes
+        assertTrue(PokemonType.FIRE in types)
+        assertTrue(PokemonType.FLYING in types)
+    }
+
+    @Test
+    fun `ClearFilters resets query and selected types`() = runTest {
+        val vm = viewModel()
+
+        vm.sendIntent(PokemonListIntent.UpdateQuery("bulba"))
+        vm.sendIntent(PokemonListIntent.ToggleTypeFilter(PokemonType.GRASS))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        vm.sendIntent(PokemonListIntent.ClearFilters)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val filter = vm.searchFilter.value
+        assertEquals("", filter.query)
+        assertTrue(filter.selectedTypes.isEmpty())
+        assertFalse(filter.isActive)
+    }
+
+    @Test
+    fun `name query debounce triggers pagingSourceFiltered after 2 seconds`() = runTest {
+        val vm = viewModel()
+        fakeSyncState.value = SyncState.Success
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        vm.pagingFlow.test {
+            awaitItem() // initial emission — empty filter
+
+            vm.sendIntent(PokemonListIntent.UpdateQuery("char"))
+
+            // Before debounce window — pagingFlow not yet triggered with new filter
+            advanceTimeBy(1_000)
+
+            // After debounce window
+            advanceTimeBy(1_500)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        verify { mockListEntryDao.pagingSourceFiltered(any<SupportSQLiteQuery>()) }
+    }
+
+    @Test
+    fun `type filter triggers pagingSourceFiltered immediately without debounce`() = runTest {
+        val vm = viewModel()
+        fakeSyncState.value = SyncState.Success
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        vm.pagingFlow.test {
+            awaitItem() // initial emission — empty filter
+
+            vm.sendIntent(PokemonListIntent.ToggleTypeFilter(PokemonType.WATER))
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        verify { mockListEntryDao.pagingSourceFiltered(any<SupportSQLiteQuery>()) }
     }
 }
