@@ -14,9 +14,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +35,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.diegocunha.pokedex.coreui.theme.PokedexTheme
 import com.diegocunha.pokedex.coreui.theme.spacing
+import com.diegocunha.pokedex.feature.pokemon.domain.model.EvolutionChain
+import com.diegocunha.pokedex.feature.pokemon.domain.model.EvolutionNode
 import com.diegocunha.pokedex.feature.pokemon.domain.model.Pokemon
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonStat
 import com.diegocunha.pokedex.feature.pokemon.presentation.common.PokemonType
+import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.EvolutionSection
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.PokemonHeader
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.StatBar
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.TypeChip
@@ -46,7 +49,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun PokemonDetailScreen(
     viewModel: PokemonDetailViewModel,
-    onNavigateToEvolution: (pokemonId: String) -> Unit,
+    onNavigateToPokemon: (pokemonId: String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -54,7 +57,7 @@ fun PokemonDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.effects.collectLatest { effect ->
             when (effect) {
-                is PokemonDetailEffect.NavigateToEvolution -> onNavigateToEvolution(effect.pokemonId)
+                is PokemonDetailEffect.NavigateToPokemon -> onNavigateToPokemon(effect.pokemonId)
             }
         }
     }
@@ -83,8 +86,11 @@ fun PokemonDetailScreen(
         is PokemonDetailState.Success -> {
             PokemonDetailContent(
                 pokemon = currentState.pokemon,
+                evolution = currentState.evolution,
                 onNavigateBack = onNavigateBack,
-                onEvolutionClick = { viewModel.sendIntent(PokemonDetailIntent.NavigateToEvolution) }
+                onPokemonClick = { pokemonId ->
+                    viewModel.sendIntent(PokemonDetailIntent.NavigateToPokemon(pokemonId))
+                }
             )
         }
     }
@@ -94,8 +100,9 @@ fun PokemonDetailScreen(
 @Composable
 private fun PokemonDetailContent(
     pokemon: Pokemon,
+    evolution: EvolutionChain,
     onNavigateBack: () -> Unit,
-    onEvolutionClick: () -> Unit
+    onPokemonClick: (pokemonId: String) -> Unit
 ) {
     val typeColor = PokemonType.fromName(pokemon.types.firstOrNull().orEmpty()).color
     Column(modifier = Modifier.fillMaxSize()) {
@@ -193,13 +200,15 @@ private fun PokemonDetailContent(
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
-            Button(
-                onClick = onEvolutionClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "View Evolutions")
-            }
+            EvolutionSection(
+                evolution = evolution,
+                onPokemonClick = onPokemonClick
+            )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
         }
     }
 }
@@ -222,14 +231,41 @@ private val previewPokemon = Pokemon(
     abilities = listOf("blaze", "solar-power")
 )
 
+private val previewEvolution = EvolutionChain(
+    base = EvolutionNode(
+        pokemonId = "4",
+        pokemonName = "charmander",
+        imageUrl = "",
+        trigger = null,
+        evolvesTo = listOf(
+            EvolutionNode(
+                pokemonId = "5",
+                pokemonName = "charmeleon",
+                imageUrl = "",
+                trigger = "Level 16",
+                evolvesTo = listOf(
+                    EvolutionNode(
+                        pokemonId = "6",
+                        pokemonName = "charizard",
+                        imageUrl = "",
+                        trigger = "Level 36",
+                        evolvesTo = emptyList()
+                    )
+                )
+            )
+        )
+    )
+)
+
 @Preview(showBackground = true, name = "Detail - Fire type")
 @Composable
 private fun PokemonDetailContentFirePreview() {
     PokedexTheme {
         PokemonDetailContent(
             pokemon = previewPokemon,
+            evolution = previewEvolution,
             onNavigateBack = {},
-            onEvolutionClick = {}
+            onPokemonClick = {}
         )
     }
 }
@@ -244,8 +280,9 @@ private fun PokemonDetailContentWaterPreview() {
                 name = "blastoise",
                 types = listOf("water")
             ),
+            evolution = previewEvolution,
             onNavigateBack = {},
-            onEvolutionClick = {}
+            onPokemonClick = {}
         )
     }
 }
@@ -260,8 +297,9 @@ private fun PokemonDetailContentGrassPreview() {
                 name = "venusaur",
                 types = listOf("grass", "poison")
             ),
+            evolution = previewEvolution,
             onNavigateBack = {},
-            onEvolutionClick = {}
+            onPokemonClick = {}
         )
     }
 }

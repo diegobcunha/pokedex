@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class PokemonDetailViewModel(
@@ -29,29 +30,41 @@ class PokemonDetailViewModel(
 
     private fun loadDetail() {
         viewModelScope.launch {
-            repository.getPokemonDetail(pokemonId.toInt()).collect { resource ->
-                when (resource) {
-                    is Resource.Loading -> if (state.value !is PokemonDetailState.Success) {
-                        updateState { PokemonDetailState.Loading }
-                    }
-                    is Resource.Success -> updateState { PokemonDetailState.Success(resource.data.toDomain()) }
-                    is Resource.Error -> if (state.value !is PokemonDetailState.Success) {
-                        updateState { PokemonDetailState.Error }
+            combine(
+                repository.getPokemonDetail(pokemonId.toInt()),
+                repository.getEvolutionData(pokemonId.toInt())
+            ) { detail, evolution -> Pair(detail, evolution) }
+                .collect { (detail, evolution) ->
+                    when {
+                        detail is Resource.Loading || evolution is Resource.Loading -> {
+                            if (state.value !is PokemonDetailState.Success) {
+                                updateState { PokemonDetailState.Loading }
+                            }
+                        }
+                        detail is Resource.Error || evolution is Resource.Error -> {
+                            if (state.value !is PokemonDetailState.Success) {
+                                updateState { PokemonDetailState.Error }
+                            }
+                        }
+                        detail is Resource.Success && evolution is Resource.Success -> {
+                            updateState {
+                                PokemonDetailState.Success(
+                                    pokemon = detail.data.toDomain(),
+                                    evolution = evolution.data.toDomain()
+                                )
+                            }
+                        }
                     }
                 }
-            }
         }
     }
 
     override fun processIntent(intent: PokemonDetailIntent) {
         when (intent) {
             is PokemonDetailIntent.Retry -> loadDetail()
-            is PokemonDetailIntent.NavigateToEvolution -> {
-                val current = state.value
-                if (current is PokemonDetailState.Success) {
-                    viewModelScope.launch {
-                        _effects.emit(PokemonDetailEffect.NavigateToEvolution(current.pokemon.id))
-                    }
+            is PokemonDetailIntent.NavigateToPokemon -> {
+                viewModelScope.launch {
+                    _effects.emit(PokemonDetailEffect.NavigateToPokemon(intent.pokemonId))
                 }
             }
         }

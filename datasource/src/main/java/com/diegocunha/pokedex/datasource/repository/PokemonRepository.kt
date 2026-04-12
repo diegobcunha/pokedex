@@ -8,4 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface PokemonRepository {
     fun getPokemonDetail(id: Int): Flow<Resource<PokemonResponse>>
     suspend fun getEvolutionChain(id: Int): Resource<EvolutionChainResponse>
+    fun getEvolutionData(pokemonId: Int): Flow<Resource<EvolutionChainResponse>>
 }
