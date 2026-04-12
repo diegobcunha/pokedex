@@ -4,23 +4,24 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import app.cash.turbine.test
 import com.diegocunha.pokedex.core.coroutines.DispatchersProvider
-import com.diegocunha.pokedex.datasource.db.PokedexDatabase
 import com.diegocunha.pokedex.datasource.db.dao.PokemonListEntryDao
-import com.diegocunha.pokedex.datasource.db.dao.RemoteKeyDao
 import com.diegocunha.pokedex.datasource.db.entity.PokemonListEntryEntity
-import com.diegocunha.pokedex.datasource.network.PokemonApiService
-import io.mockk.coEvery
+import com.diegocunha.pokedex.datasource.sync.PokemonSyncManager
+import com.diegocunha.pokedex.datasource.sync.SyncState
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -42,19 +43,17 @@ class PokemonListViewModelTest {
         override fun main(): CoroutineDispatcher = testDispatcher
     }
 
-    private val apiService: PokemonApiService = mockk()
-    private val mockDatabase = mockk<PokedexDatabase>(relaxed = true)
-    private val mockListEntryDao = mockk<PokemonListEntryDao>(relaxed = true)
-    private val mockRemoteKeyDao = mockk<RemoteKeyDao>(relaxed = true)
+    private val fakeSyncState = MutableStateFlow<SyncState>(SyncState.Idle)
+    private val mockSyncManager = mockk<PokemonSyncManager>(relaxed = true) {
+        every { syncState } returns fakeSyncState
+    }
+    private val mockListEntryDao = mockk<PokemonListEntryDao>(relaxed = true) {
+        every { pagingSource() } returns FakeEmptyPagingSource()
+    }
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        every { mockDatabase.pokemonListEntryDao() } returns mockListEntryDao
-        every { mockDatabase.remoteKeyDao() } returns mockRemoteKeyDao
-        every { mockListEntryDao.pagingSource() } returns FakeEmptyPagingSource()
-        // Return a fresh timestamp so the mediator skips the initial refresh
-        coEvery { mockRemoteKeyDao.oldestCreatedAt() } returns System.currentTimeMillis()
     }
 
     @After
@@ -62,24 +61,72 @@ class PokemonListViewModelTest {
         Dispatchers.resetMain()
     }
 
+    private fun viewModel() = PokemonListViewModel(mockSyncManager, mockListEntryDao, testDispatchers)
+
     @Test
-    fun `SelectPokemon intent emits NavigateToDetail effect with the provided id`() = runTest {
-        val viewModel = PokemonListViewModel(apiService, mockDatabase, testDispatchers)
+    fun `init triggers sync on SyncManager`() = runTest {
+        viewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        verify(exactly = 1) { mockSyncManager.sync() }
+    }
 
-        viewModel.effects.test {
-            viewModel.sendIntent(PokemonListIntent.SelectPokemon(id = "1"))
+    @Test
+    fun `sync Loading state maps to PokemonListState Loading`() = runTest {
+        val vm = viewModel()
+        fakeSyncState.value = SyncState.Loading
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue(vm.state.value is PokemonListState.Loading)
+    }
+
+    @Test
+    fun `sync Success state maps to PokemonListState Success`() = runTest {
+        val vm = viewModel()
+        fakeSyncState.value = SyncState.Success
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertTrue(vm.state.value is PokemonListState.Success)
+    }
+
+    @Test
+    fun `sync Error state maps to PokemonListState Error with exception`() = runTest {
+        val vm = viewModel()
+        val exception = RuntimeException("Sync failed")
+        fakeSyncState.value = SyncState.Error(exception)
+        testDispatcher.scheduler.advanceUntilIdle()
+        val state = vm.state.value
+        assertTrue(state is PokemonListState.Error)
+        assertEquals(exception, (state as PokemonListState.Error).exception)
+    }
+
+    @Test
+    fun `SelectPokemon intent emits NavigateToDetail effect`() = runTest {
+        val vm = viewModel()
+
+        vm.effects.test {
+            vm.sendIntent(PokemonListIntent.SelectPokemon(id = "25"))
             testDispatcher.scheduler.advanceUntilIdle()
-
-            val effect = awaitItem()
-            assertEquals(PokemonListEffect.NavigateToDetail("1"), effect)
+            assertEquals(PokemonListEffect.NavigateToDetail("25"), awaitItem())
         }
     }
 
     @Test
-    fun `pagingFlow collects without error`() = runTest {
-        val viewModel = PokemonListViewModel(apiService, mockDatabase, testDispatchers)
+    fun `Retry intent calls sync on SyncManager`() = runTest {
+        val vm = viewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
 
-        viewModel.pagingFlow.test {
+        vm.sendIntent(PokemonListIntent.Retry)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // sync() called once on init + once on Retry
+        verify(exactly = 2) { mockSyncManager.sync() }
+    }
+
+    @Test
+    fun `pagingFlow collects without error when sync succeeds`() = runTest {
+        val vm = viewModel()
+        fakeSyncState.value = SyncState.Success
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        vm.pagingFlow.test {
             awaitItem()
             cancelAndIgnoreRemainingEvents()
         }

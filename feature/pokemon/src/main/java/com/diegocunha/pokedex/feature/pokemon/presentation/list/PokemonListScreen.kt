@@ -1,26 +1,27 @@
 package com.diegocunha.pokedex.feature.pokemon.presentation.list
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,46 +43,37 @@ fun PokemonListScreen(
     viewModel: PokemonListViewModel,
     onNavigateToDetail: (pokemonId: String) -> Unit
 ) {
+    val state by viewModel.state.collectAsState()
     val lazyPagingItems = viewModel.pagingFlow.collectAsLazyPagingItems()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 is PokemonListEffect.NavigateToDetail -> onNavigateToDetail(effect.pokemonId)
-                is PokemonListEffect.ShowErrorSnackbar -> snackbarHostState.showSnackbar("Failed to load more Pokémon")
             }
         }
     }
 
-    LaunchedEffect(lazyPagingItems.loadState.append) {
-        if (lazyPagingItems.loadState.append is LoadState.Error) {
-            snackbarHostState.showSnackbar("Failed to load more Pokémon")
-        }
-    }
-
     PokemonListScreenContent(
+        state = state,
         lazyPagingItems = lazyPagingItems,
-        snackbarHostState = snackbarHostState,
         onPokemonClick = { pokemon ->
             viewModel.sendIntent(PokemonListIntent.SelectPokemon(id = pokemon.id))
         },
-        onRetry = { lazyPagingItems.retry() }
+        onRetry = { viewModel.sendIntent(PokemonListIntent.Retry) }
     )
 }
 
 @Composable
 private fun PokemonListScreenContent(
+    state: PokemonListState,
     lazyPagingItems: LazyPagingItems<PokemonEntry>,
-    snackbarHostState: SnackbarHostState,
     onPokemonClick: (PokemonEntry) -> Unit,
     onRetry: () -> Unit
 ) {
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
-        when (lazyPagingItems.loadState.refresh) {
-            is LoadState.Loading -> {
+    Scaffold { paddingValues ->
+        when (state) {
+            is PokemonListState.Loading -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -92,20 +84,27 @@ private fun PokemonListScreenContent(
                 }
             }
 
-            is LoadState.Error -> {
+            is PokemonListState.Error -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
-                    TextButton(onClick = onRetry) {
-                        Text(text = "Retry")
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Failed to load Pokémon",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+                        Button(onClick = onRetry) {
+                            Text(text = "Retry")
+                        }
                     }
                 }
             }
 
-            else -> {
+            is PokemonListState.Success -> {
                 PokemonList(
                     lazyPagingItems = lazyPagingItems,
                     modifier = Modifier.padding(paddingValues),
@@ -179,8 +178,8 @@ private fun PokemonListScreenPreview() {
     )
     val lazyPagingItems = flowOf(PagingData.from(items)).collectAsLazyPagingItems()
     PokemonListScreenContent(
+        state = PokemonListState.Success,
         lazyPagingItems = lazyPagingItems,
-        snackbarHostState = remember { SnackbarHostState() },
         onPokemonClick = {},
         onRetry = {}
     )
@@ -191,8 +190,8 @@ private fun PokemonListScreenPreview() {
 private fun PokemonListScreenLoadingPreview() {
     val lazyPagingItems = flowOf(PagingData.empty<PokemonEntry>()).collectAsLazyPagingItems()
     PokemonListScreenContent(
+        state = PokemonListState.Loading,
         lazyPagingItems = lazyPagingItems,
-        snackbarHostState = remember { SnackbarHostState() },
         onPokemonClick = {},
         onRetry = {}
     )
@@ -201,18 +200,10 @@ private fun PokemonListScreenLoadingPreview() {
 @Preview(showBackground = true, name = "PokemonListScreen - Error")
 @Composable
 private fun PokemonListScreenErrorPreview() {
-    val lazyPagingItems = flowOf(
-        PagingData.empty<PokemonEntry>(
-            sourceLoadStates = androidx.paging.LoadStates(
-                refresh = LoadState.Error(Exception("Network error")),
-                prepend = LoadState.NotLoading(false),
-                append = LoadState.NotLoading(false)
-            )
-        )
-    ).collectAsLazyPagingItems()
+    val lazyPagingItems = flowOf(PagingData.empty<PokemonEntry>()).collectAsLazyPagingItems()
     PokemonListScreenContent(
+        state = PokemonListState.Error(Exception("Network error")),
         lazyPagingItems = lazyPagingItems,
-        snackbarHostState = remember { SnackbarHostState() },
         onPokemonClick = {},
         onRetry = {}
     )

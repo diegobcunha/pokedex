@@ -17,3 +17,20 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         )
     }
 }
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("DROP TABLE IF EXISTS `remote_keys`")
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `sync_state` (
+                `id` INTEGER NOT NULL,
+                `status` TEXT NOT NULL,
+                `previousCount` INTEGER NOT NULL,
+                `syncedAt` INTEGER NOT NULL,
+                PRIMARY KEY(`id`)
+            )
+            """.trimIndent()
+        )
+    }
+}
