@@ -3,7 +3,9 @@ package com.diegocunha.pokedex.datasource.repository
 import com.diegocunha.pokedex.core.Resource
 import com.diegocunha.pokedex.core.coroutines.DispatchersProvider
 import com.diegocunha.pokedex.datasource.db.dao.PokemonDetailDao
+import com.diegocunha.pokedex.datasource.db.dao.PokemonEvolutionDao
 import com.diegocunha.pokedex.datasource.db.entity.PokemonDetailEntity
+import com.diegocunha.pokedex.datasource.db.entity.PokemonEvolutionEntity
 import com.diegocunha.pokedex.datasource.model.EvolutionChainResponse
 import com.diegocunha.pokedex.datasource.model.PokemonAbility
 import com.diegocunha.pokedex.datasource.model.PokemonAbilitySlot
@@ -31,6 +33,7 @@ class PokemonRepositoryImpl(
     private val apiService: PokemonApiService,
     private val dispatchersProvider: DispatchersProvider,
     private val pokemonDetailDao: PokemonDetailDao,
+    private val pokemonEvolutionDao: PokemonEvolutionDao,
     private val json: Json,
 ) : PokemonRepository {
 
@@ -61,6 +64,41 @@ class PokemonRepositoryImpl(
 
     override suspend fun getEvolutionChain(id: Int): Resource<EvolutionChainResponse> =
         safeApiCall(dispatchersProvider) { apiService.getEvolutionChain(id) }
+
+    override fun getEvolutionData(pokemonId: Int): Flow<Resource<EvolutionChainResponse>> = flow {
+        emit(Resource.Loading)
+
+        val cached = pokemonEvolutionDao.getByPokemonId(pokemonId.toString())
+        if (cached != null) {
+            emit(Resource.Success(json.decodeFromString(EvolutionChainResponse.serializer(), cached.chainJson)))
+            return@flow
+        }
+
+        val speciesResult = safeApiCall(dispatchersProvider) { apiService.getPokemonSpecies(pokemonId) }
+        if (speciesResult is Resource.Error) {
+            emit(Resource.Error(speciesResult.exception))
+            return@flow
+        }
+        val chainId = extractIdFromUrl((speciesResult as Resource.Success).data.evolutionChain.url)
+
+        val chainResult = safeApiCall(dispatchersProvider) { apiService.getEvolutionChain(chainId) }
+        if (chainResult is Resource.Error) {
+            emit(Resource.Error(chainResult.exception))
+            return@flow
+        }
+        val chain = (chainResult as Resource.Success).data
+        pokemonEvolutionDao.insert(
+            PokemonEvolutionEntity(
+                pokemonId = pokemonId.toString(),
+                chainId = chainId,
+                chainJson = json.encodeToString(EvolutionChainResponse.serializer(), chain)
+            )
+        )
+        emit(Resource.Success(chain))
+    }
+
+    private fun extractIdFromUrl(url: String): Int =
+        url.trimEnd('/').substringAfterLast('/').toInt()
 
     private fun PokemonResponse.toDetailEntity(lastFetched: Long) = PokemonDetailEntity(
         id = id.toString(),

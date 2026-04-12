@@ -2,6 +2,9 @@ package com.diegocunha.pokedex.feature.pokemon.presentation.detail
 
 import app.cash.turbine.test
 import com.diegocunha.pokedex.core.Resource
+import com.diegocunha.pokedex.datasource.model.ChainLink
+import com.diegocunha.pokedex.datasource.model.EvolutionChainResponse
+import com.diegocunha.pokedex.datasource.model.NamedResource
 import com.diegocunha.pokedex.datasource.model.PokemonAbility
 import com.diegocunha.pokedex.datasource.model.PokemonAbilitySlot
 import com.diegocunha.pokedex.datasource.model.PokemonResponse
@@ -44,8 +47,9 @@ class PokemonDetailViewModelTest {
     }
 
     @Test
-    fun `init emits Loading then Success when repository returns success`() = runTest {
-        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Loading, Resource.Success(fakePokemon()))
+    fun `init emits Success when both detail and evolution return success`() = runTest {
+        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Success(fakePokemon()))
+        every { repository.getEvolutionData(1) } returns flowOf(Resource.Success(fakeChain()))
         val viewModel = PokemonDetailViewModel("1", repository)
 
         testDispatcher.scheduler.advanceUntilIdle()
@@ -56,8 +60,20 @@ class PokemonDetailViewModelTest {
     }
 
     @Test
-    fun `init emits Error when repository returns error`() = runTest {
-        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Loading, Resource.Error(RuntimeException("error")))
+    fun `init emits Error when detail returns error`() = runTest {
+        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Error(RuntimeException("error")))
+        every { repository.getEvolutionData(1) } returns flowOf(Resource.Success(fakeChain()))
+        val viewModel = PokemonDetailViewModel("1", repository)
+
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue(viewModel.state.value is PokemonDetailState.Error)
+    }
+
+    @Test
+    fun `init emits Error when evolution returns error`() = runTest {
+        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Success(fakePokemon()))
+        every { repository.getEvolutionData(1) } returns flowOf(Resource.Error(RuntimeException("error")))
         val viewModel = PokemonDetailViewModel("1", repository)
 
         testDispatcher.scheduler.advanceUntilIdle()
@@ -68,8 +84,12 @@ class PokemonDetailViewModelTest {
     @Test
     fun `Retry intent re-fetches and updates state to Success`() = runTest {
         every { repository.getPokemonDetail(1) } returnsMany listOf(
-            flowOf(Resource.Loading, Resource.Error(RuntimeException("first failure"))),
-            flowOf(Resource.Loading, Resource.Success(fakePokemon()))
+            flowOf(Resource.Error(RuntimeException("first failure"))),
+            flowOf(Resource.Success(fakePokemon()))
+        )
+        every { repository.getEvolutionData(1) } returnsMany listOf(
+            flowOf(Resource.Error(RuntimeException("first failure"))),
+            flowOf(Resource.Success(fakeChain()))
         )
         val viewModel = PokemonDetailViewModel("1", repository)
         testDispatcher.scheduler.advanceUntilIdle()
@@ -82,17 +102,18 @@ class PokemonDetailViewModelTest {
     }
 
     @Test
-    fun `NavigateToEvolution intent emits NavigateToEvolution effect when state is Success`() = runTest {
-        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Loading, Resource.Success(fakePokemon()))
+    fun `NavigateToPokemon intent emits NavigateToPokemon effect`() = runTest {
+        every { repository.getPokemonDetail(1) } returns flowOf(Resource.Success(fakePokemon()))
+        every { repository.getEvolutionData(1) } returns flowOf(Resource.Success(fakeChain()))
         val viewModel = PokemonDetailViewModel("1", repository)
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.effects.test {
-            viewModel.sendIntent(PokemonDetailIntent.NavigateToEvolution)
+            viewModel.sendIntent(PokemonDetailIntent.NavigateToPokemon("2"))
             testDispatcher.scheduler.advanceUntilIdle()
 
             val effect = awaitItem()
-            assertEquals(PokemonDetailEffect.NavigateToEvolution("1"), effect)
+            assertEquals(PokemonDetailEffect.NavigateToPokemon("2"), effect)
         }
     }
 
@@ -105,5 +126,13 @@ class PokemonDetailViewModelTest {
         stats = listOf(PokemonStatSlot(45, 0, PokemonStat("hp", "url"))),
         sprites = PokemonSprites("front_url", null),
         abilities = listOf(PokemonAbilitySlot(PokemonAbility("overgrow", "url"), false, 1))
+    )
+
+    private fun fakeChain() = EvolutionChainResponse(
+        id = 1,
+        chain = ChainLink(
+            species = NamedResource("bulbasaur", "https://pokeapi.co/api/v2/pokemon-species/1/"),
+            evolvesTo = emptyList()
+        )
     )
 }

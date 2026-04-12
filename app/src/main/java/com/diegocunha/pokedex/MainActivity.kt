@@ -7,7 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.diegocunha.pokedex.coreui.theme.PokedexTheme
-import com.diegocunha.pokedex.feature.evolutions.navigation.EvolutionRoutes
 import com.diegocunha.pokedex.feature.evolutions.navigation.evolutionGraph
 import com.diegocunha.pokedex.feature.pokemon.navigation.PokemonRoutes
 import com.diegocunha.pokedex.feature.pokemon.navigation.pokemonGraph
@@ -25,7 +24,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     pokemonGraph(
                         onNavigateToDetail = { id -> navController.navigate(PokemonRoutes.detail(id)) },
-                        onNavigateToEvolution = { id -> navController.navigate(EvolutionRoutes.evolution(id)) },
+                        onNavigateToPokemon = { id -> navController.navigate(PokemonRoutes.detail(id)) },
                         onNavigateBack = { navController.popBackStack() }
                     )
                     evolutionGraph()

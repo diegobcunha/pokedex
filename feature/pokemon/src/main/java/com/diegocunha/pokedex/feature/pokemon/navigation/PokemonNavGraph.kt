@@ -13,7 +13,7 @@ import org.koin.core.parameter.parametersOf
 
 fun NavGraphBuilder.pokemonGraph(
     onNavigateToDetail: (pokemonId: String) -> Unit,
-    onNavigateToEvolution: (pokemonId: String) -> Unit,
+    onNavigateToPokemon: (pokemonId: String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
     composable(PokemonRoutes.LIST) {
@@ -31,7 +31,7 @@ fun NavGraphBuilder.pokemonGraph(
         val viewModel: PokemonDetailViewModel = koinViewModel { parametersOf(pokemonId) }
         PokemonDetailScreen(
             viewModel = viewModel,
-            onNavigateToEvolution = onNavigateToEvolution,
+            onNavigateToPokemon = onNavigateToPokemon,
             onNavigateBack = onNavigateBack
         )
     }

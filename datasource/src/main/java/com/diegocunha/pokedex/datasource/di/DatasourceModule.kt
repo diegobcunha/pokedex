@@ -2,6 +2,7 @@ package com.diegocunha.pokedex.datasource.di
 
 import androidx.room.Room
 import com.diegocunha.pokedex.datasource.BuildConfig
+import com.diegocunha.pokedex.datasource.db.MIGRATION_1_2
 import com.diegocunha.pokedex.datasource.db.PokedexDatabase
 import com.diegocunha.pokedex.datasource.network.PokemonApiService
 import com.diegocunha.pokedex.datasource.network.createOkHttpClient
@@ -19,10 +20,13 @@ val datasourceModule = module {
     single { createRetrofit(okHttpClient = get(), json = get()) }
     single { get<Retrofit>().create(PokemonApiService::class.java) }
     single {
-        Room.databaseBuilder(androidContext(), PokedexDatabase::class.java, "pokedex.db").build()
+        Room.databaseBuilder(androidContext(), PokedexDatabase::class.java, "pokedex.db")
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
     single { get<PokedexDatabase>().pokemonListEntryDao() }
     single { get<PokedexDatabase>().remoteKeyDao() }
     single { get<PokedexDatabase>().pokemonDetailDao() }
-    single<PokemonRepository> { PokemonRepositoryImpl(get(), get(), get(), get()) }
+    single { get<PokedexDatabase>().pokemonEvolutionDao() }
+    single<PokemonRepository> { PokemonRepositoryImpl(get(), get(), get(), get(), get()) }
 }
