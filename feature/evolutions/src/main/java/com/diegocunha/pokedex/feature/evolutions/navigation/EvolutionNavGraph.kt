@@ -1,11 +1,12 @@
 package com.diegocunha.pokedex.feature.evolutions.navigation
 
-import androidx.navigation3.runtime.EntryProviderBuilder
+import androidx.compose.runtime.Composable
+import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entry
 import com.diegocunha.pokedex.feature.evolutions.presentation.EvolutionScreen
 
-fun EntryProviderBuilder<NavKey>.evolutionEntries() {
+@Composable
+fun EntryProviderScope<NavKey>.EvolutionEntries() {
     entry<EvolutionDestination> { key ->
         EvolutionScreen(pokemonId = key.pokemonId)
     }
