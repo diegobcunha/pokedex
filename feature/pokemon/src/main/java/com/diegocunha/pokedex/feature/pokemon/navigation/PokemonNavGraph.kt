@@ -1,9 +1,8 @@
 package com.diegocunha.pokedex.feature.pokemon.navigation
 
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation3.runtime.EntryProviderBuilder
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entry
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.PokemonDetailScreen
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.PokemonDetailViewModel
 import com.diegocunha.pokedex.feature.pokemon.presentation.list.PokemonListScreen
@@ -11,24 +10,20 @@ import com.diegocunha.pokedex.feature.pokemon.presentation.list.PokemonListViewM
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-fun NavGraphBuilder.pokemonGraph(
+fun EntryProviderBuilder<NavKey>.pokemonEntries(
     onNavigateToDetail: (pokemonId: String) -> Unit,
     onNavigateToPokemon: (pokemonId: String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
-    composable(PokemonRoutes.LIST) {
+    entry<PokemonList> {
         val viewModel: PokemonListViewModel = koinViewModel()
         PokemonListScreen(
             viewModel = viewModel,
             onNavigateToDetail = onNavigateToDetail
         )
     }
-    composable(
-        route = PokemonRoutes.DETAIL,
-        arguments = listOf(navArgument("pokemonId") { type = NavType.StringType })
-    ) { backStackEntry ->
-        val pokemonId = backStackEntry.arguments?.getString("pokemonId").orEmpty()
-        val viewModel: PokemonDetailViewModel = koinViewModel { parametersOf(pokemonId) }
+    entry<PokemonDetail> { key ->
+        val viewModel: PokemonDetailViewModel = koinViewModel { parametersOf(key.pokemonId) }
         PokemonDetailScreen(
             viewModel = viewModel,
             onNavigateToPokemon = onNavigateToPokemon,

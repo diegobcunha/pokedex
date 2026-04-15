@@ -1,17 +1,12 @@
 package com.diegocunha.pokedex.feature.evolutions.navigation
 
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation3.runtime.EntryProviderBuilder
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entry
 import com.diegocunha.pokedex.feature.evolutions.presentation.EvolutionScreen
 
-fun NavGraphBuilder.evolutionGraph() {
-    composable(
-        route = EvolutionRoutes.EVOLUTION,
-        arguments = listOf(navArgument("pokemonId") { type = NavType.StringType })
-    ) { backStackEntry ->
-        val pokemonId = backStackEntry.arguments?.getString("pokemonId").orEmpty()
-        EvolutionScreen(pokemonId = pokemonId)
+fun EntryProviderBuilder<NavKey>.evolutionEntries() {
+    entry<EvolutionDestination> { key ->
+        EvolutionScreen(pokemonId = key.pokemonId)
     }
 }

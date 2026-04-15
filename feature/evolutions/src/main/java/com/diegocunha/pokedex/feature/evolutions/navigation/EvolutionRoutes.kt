@@ -1,6 +1,5 @@
 package com.diegocunha.pokedex.feature.evolutions.navigation
 
-object EvolutionRoutes {
-    const val EVOLUTION = "evolution/{pokemonId}"
-    fun evolution(pokemonId: String) = "evolution/$pokemonId"
-}
+import androidx.navigation3.runtime.NavKey
+
+data class EvolutionDestination(val pokemonId: String) : NavKey
