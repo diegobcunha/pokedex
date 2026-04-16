@@ -17,7 +17,8 @@ coroutines = "1.9.0"
 mockk = "1.13.13"
 turbine = "1.2.0"
 kover = "0.9.5"
-navigation3 = "1.0.1"
+navigation3 = "1.1.0"
+navigation3Lifecycle = "2.10.0"
 paging = "3.3.6"
 coil = "2.7.0"
 room = "2.7.1"
@@ -55,6 +56,7 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3" }
+androidx-lifecycle-viewmodel-navigation3 = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "navigation3Lifecycle" }
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }

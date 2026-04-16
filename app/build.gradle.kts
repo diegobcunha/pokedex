@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
