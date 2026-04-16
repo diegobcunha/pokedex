@@ -24,7 +24,7 @@ fun EntryProviderScope<NavKey>.PokemonEntries(
         )
     }
     entry<PokemonDetail> { key ->
-        val viewModel: PokemonDetailViewModel = koinViewModel { parametersOf(key.pokemonId) }
+        val viewModel: PokemonDetailViewModel = koinViewModel(key = key.pokemonId) { parametersOf(key.pokemonId) }
         PokemonDetailScreen(
             viewModel = viewModel,
             onNavigateToPokemon = onNavigateToPokemon,
