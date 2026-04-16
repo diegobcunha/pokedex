@@ -4,7 +4,6 @@ import android.app.Application
 import com.diegocunha.pokedex.core.di.coreModule
 import com.diegocunha.pokedex.coreui.di.coreUiModule
 import com.diegocunha.pokedex.datasource.di.datasourceModule
-import com.diegocunha.pokedex.feature.evolutions.di.evolutionsModule
 import com.diegocunha.pokedex.feature.pokemon.di.pokemonModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -21,8 +20,7 @@ class PokedexApplication : Application() {
                 coreModule,
                 coreUiModule,
                 datasourceModule,
-                pokemonModule,
-                evolutionsModule
+                pokemonModule
             )
         }
     }

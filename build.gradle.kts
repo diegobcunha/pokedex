@@ -12,7 +12,6 @@ dependencies {
     kover(project(":core"))
     kover(project(":datasource"))
     kover(project(":feature:pokemon"))
-    kover(project(":feature:evolutions"))
 }
 
 kover {

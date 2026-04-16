@@ -10,7 +10,6 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.diegocunha.pokedex.coreui.theme.PokedexTheme
-import com.diegocunha.pokedex.feature.evolutions.navigation.EvolutionEntries
 import com.diegocunha.pokedex.feature.pokemon.navigation.PokemonDetail
 import com.diegocunha.pokedex.feature.pokemon.navigation.PokemonEntries
 import com.diegocunha.pokedex.feature.pokemon.navigation.PokemonList
@@ -35,7 +34,6 @@ class MainActivity : ComponentActivity() {
                             onNavigateToPokemon = { id -> backStack.add(PokemonDetail(id)) },
                             onNavigateBack = { backStack.removeLastOrNull() }
                         )
-                        EvolutionEntries()
                     }
                 )
             }
