@@ -63,7 +63,7 @@ UI → Intent → ViewModel.processIntent() → updateState() → UI renders new
 Navigation uses Jetpack Compose Navigation with a **NavGraphBuilder extension pattern**: each feature module declares its own `NavGraph` extension, keeping routing ownership close to the feature. The `app` module composes them without knowing their internals.
 
 ```
-PokemonListScreen → PokemonDetailScreen → EvolutionScreen
+PokemonListScreen → PokemonDetailScreen
 ```
 
 Routes are string constants with path parameters (e.g., `pokemon/detail/{pokemonId}`).
@@ -191,9 +191,6 @@ This approach demonstrates how AI can augment a senior developer's workflow with
 - Abilities list
 - "View Evolutions" button navigating to the evolution screen
 
-### Evolutions
-- Route scaffold in place; full implementation pending
-
 ---
 
 ## Project Status
@@ -204,7 +201,6 @@ This approach demonstrates how AI can augment a senior developer's workflow with
 | `:core-ui` | Complete — Material3 theme, dynamic color (Android 12+) |
 | `:datasource` | Complete — Retrofit/OkHttp, HeaderInterceptor, SafeApiCall, PokemonRepository |
 | `:feature:pokemon` | Complete — list (pagination) + detail (types, stats, abilities, image) + full unit tests |
-| `:feature:evolutions` | Scaffold only — route and placeholder screen in place, feature pending |
 
 ---
 

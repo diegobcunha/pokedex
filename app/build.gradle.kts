@@ -46,7 +46,6 @@ dependencies {
     implementation(project(":core-ui"))
     implementation(project(":datasource"))
     implementation(project(":feature:pokemon"))
-    implementation(project(":feature:evolutions"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
