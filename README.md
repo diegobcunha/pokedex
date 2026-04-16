@@ -1,6 +1,6 @@
 # Pokedex — Android Portfolio App
 
-![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
 
 A modern Android application built as a portfolio project, showcasing production-grade architecture, clean code practices, and a structured AI-assisted development workflow using **Specification-Driven Development (SDD)**.
 
