@@ -6,6 +6,14 @@ A modern Android application built as a portfolio project, showcasing production
 
 ---
 
+## Screenshots
+
+| Pokemon List | Pokemon Detail | Evolution Chain |
+|:---:|:---:|:---:|
+| ![Pokemon List](docs/screenshots/screen_list.png) | ![Pokemon Detail](docs/screenshots/screen_detail.png) | ![Evolution Chain](docs/screenshots/screen_detail_scroll.png) |
+
+---
+
 ## Purpose
 
 This project was built to demonstrate senior-level Android engineering skills, including:
