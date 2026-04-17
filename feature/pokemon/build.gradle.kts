@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.coil.compose)
+    implementation(libs.kotlinx.collections.immutable)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 

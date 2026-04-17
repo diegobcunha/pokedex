@@ -44,6 +44,7 @@ import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.Evo
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.PokemonHeader
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.StatBar
 import com.diegocunha.pokedex.feature.pokemon.presentation.detail.components.TypeChip
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -218,8 +219,8 @@ private val previewPokemon = Pokemon(
     name = "charizard",
     height = 17,
     weight = 905,
-    types = listOf("fire", "flying"),
-    stats = listOf(
+    types = persistentListOf("fire", "flying"),
+    stats = persistentListOf(
         PokemonStat("hp", 78),
         PokemonStat("attack", 84),
         PokemonStat("defense", 78),
@@ -228,7 +229,7 @@ private val previewPokemon = Pokemon(
         PokemonStat("speed", 100)
     ),
     imageUrl = null,
-    abilities = listOf("blaze", "solar-power")
+    abilities = persistentListOf("blaze", "solar-power")
 )
 
 private val previewEvolution = EvolutionChain(
@@ -278,7 +279,7 @@ private fun PokemonDetailContentWaterPreview() {
             pokemon = previewPokemon.copy(
                 id = "9",
                 name = "blastoise",
-                types = listOf("water")
+                types = persistentListOf("water")
             ),
             evolution = previewEvolution,
             onNavigateBack = {},
@@ -295,7 +296,7 @@ private fun PokemonDetailContentGrassPreview() {
             pokemon = previewPokemon.copy(
                 id = "3",
                 name = "venusaur",
-                types = listOf("grass", "poison")
+                types = persistentListOf("grass", "poison")
             ),
             evolution = previewEvolution,
             onNavigateBack = {},

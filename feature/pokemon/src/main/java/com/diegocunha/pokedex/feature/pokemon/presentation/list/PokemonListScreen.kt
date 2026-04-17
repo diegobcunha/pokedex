@@ -39,6 +39,8 @@ import com.diegocunha.pokedex.feature.pokemon.presentation.common.PokemonType
 import com.diegocunha.pokedex.feature.pokemon.presentation.list.components.PokemonSearchBar
 import com.diegocunha.pokedex.feature.pokemon.presentation.list.components.SearchEmptyState
 import com.diegocunha.pokedex.feature.pokemon.presentation.list.components.TypeFilterRow
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
 
@@ -221,7 +223,7 @@ private fun PokemonList(
 @Composable
 private fun PokemonListItemEnrichedPreview() {
     PokemonListItem(
-        pokemon = PokemonEntry(id = "1", name = "Bulbasaur", types = listOf("grass"), imageUrl = null),
+        pokemon = PokemonEntry(id = "1", name = "Bulbasaur", types = persistentListOf("grass"), imageUrl = null),
         onClick = {}
     )
 }
@@ -239,9 +241,9 @@ private fun PokemonListItemFallbackPreview() {
 @Composable
 private fun PokemonListScreenPreview() {
     val items = listOf(
-        PokemonEntry(id = "1", name = "bulbasaur", types = listOf("grass")),
-        PokemonEntry(id = "2", name = "ivysaur", types = listOf("grass", "poison")),
-        PokemonEntry(id = "4", name = "charmander", types = listOf("fire")),
+        PokemonEntry(id = "1", name = "bulbasaur", types = persistentListOf("grass")),
+        PokemonEntry(id = "2", name = "ivysaur", types = persistentListOf("grass", "poison")),
+        PokemonEntry(id = "4", name = "charmander", types = persistentListOf("fire")),
     )
     val lazyPagingItems = flowOf(PagingData.from(items)).collectAsLazyPagingItems()
     PokemonListScreenContent(
@@ -262,7 +264,7 @@ private fun PokemonListScreenEmptyFilterPreview() {
     val lazyPagingItems = flowOf(PagingData.empty<PokemonEntry>()).collectAsLazyPagingItems()
     PokemonListScreenContent(
         state = PokemonListState.Success,
-        searchFilter = SearchFilter(query = "pikachu", selectedTypes = setOf(PokemonType.FIRE)),
+        searchFilter = SearchFilter(query = "pikachu", selectedTypes = persistentSetOf(PokemonType.FIRE)),
         lazyPagingItems = lazyPagingItems,
         onPokemonClick = {},
         onRetry = {},

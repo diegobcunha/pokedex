@@ -6,6 +6,7 @@ import com.diegocunha.pokedex.datasource.model.PokemonResponse
 import com.diegocunha.pokedex.feature.pokemon.domain.model.Pokemon
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonEntry
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonStat
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
@@ -21,14 +22,14 @@ fun PokemonEntryResponse.toDomain(detail: PokemonResponse): PokemonEntry = Pokem
     id = url.trimEnd('/').substringAfterLast('/'),
     name = name,
     imageUrl = detail.sprites.frontDefault,
-    types = detail.types.sortedBy { it.slot }.map { it.type.name }
+    types = detail.types.sortedBy { it.slot }.map { it.type.name }.toImmutableList()
 )
 
 fun PokemonListEntryEntity.toDomain(): PokemonEntry = PokemonEntry(
     id = id,
     name = name,
     imageUrl = imageUrl,
-    types = json.decodeFromString(ListSerializer(String.serializer()), types)
+    types = json.decodeFromString(ListSerializer(String.serializer()), types).toImmutableList()
 )
 
 fun PokemonResponse.toDomain(): Pokemon = Pokemon(
@@ -36,8 +37,8 @@ fun PokemonResponse.toDomain(): Pokemon = Pokemon(
     name = name,
     height = height,
     weight = weight,
-    types = types.map { it.type.name },
-    stats = stats.map { PokemonStat(name = it.stat.name, value = it.baseStat) },
+    types = types.map { it.type.name }.toImmutableList(),
+    stats = stats.map { PokemonStat(name = it.stat.name, value = it.baseStat) }.toImmutableList(),
     imageUrl = sprites.frontDefault,
-    abilities = abilities.map { it.ability.name }
+    abilities = abilities.map { it.ability.name }.toImmutableList()
 )

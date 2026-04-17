@@ -16,6 +16,8 @@ import com.diegocunha.pokedex.feature.pokemon.domain.mapper.toDomain
 import com.diegocunha.pokedex.feature.pokemon.domain.model.PokemonEntry
 import com.diegocunha.pokedex.feature.pokemon.domain.model.SearchFilter
 import com.diegocunha.pokedex.feature.pokemon.presentation.common.PokemonType
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -46,7 +48,7 @@ class PokemonListViewModel(
     val effects: Flow<PokemonListEffect> = _effects.receiveAsFlow()
 
     private val _rawQuery = MutableStateFlow("")
-    private val _selectedTypes = MutableStateFlow<Set<PokemonType>>(emptySet())
+    private val _selectedTypes = MutableStateFlow<PersistentSet<PokemonType>>(persistentSetOf())
 
     // Exposed to UI — raw (non-debounced) query for responsive TextField,
     // eagerly shared so .value is always current.
@@ -114,11 +116,11 @@ class PokemonListViewModel(
             is PokemonListIntent.Retry -> syncManager.sync()
             is PokemonListIntent.UpdateQuery -> _rawQuery.value = intent.query
             is PokemonListIntent.ToggleTypeFilter -> _selectedTypes.update { types ->
-                if (intent.type in types) types - intent.type else types + intent.type
+                if (intent.type in types) types.remove(intent.type) else types.add(intent.type)
             }
             is PokemonListIntent.ClearFilters -> {
                 _rawQuery.value = ""
-                _selectedTypes.value = emptySet()
+                _selectedTypes.value = persistentSetOf()
             }
         }
     }

@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(./gradlew assembleDebug 2>&1)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "mcp__android-skills__search_skills",
+      "mcp__android-skills__get_skill"
     ]
   }
 }
